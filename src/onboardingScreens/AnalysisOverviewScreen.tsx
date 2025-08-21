@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, useWindowDimensions } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, useWindowDimensions, Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import Svg, { Circle, Path, G } from 'react-native-svg';
@@ -71,6 +71,37 @@ function AnalysisOverviewScreen() {
   const navigation = useNavigation();
   const { width, height } = useWindowDimensions();
   const scale = Math.min(width / 375, 1);
+  // Animated values
+  const titleOpacity = useRef(new Animated.Value(0)).current;
+  const titleTranslateY = useRef(new Animated.Value(12)).current;
+  const subtitleOpacity = useRef(new Animated.Value(0)).current;
+  const subtitleTranslateY = useRef(new Animated.Value(18)).current;
+  const cardsOpacity = useRef(new Animated.Value(0)).current;
+  const cardsScale = useRef(new Animated.Value(0.96)).current;
+  const ctaOpacity = useRef(new Animated.Value(0)).current;
+  const ctaTranslateY = useRef(new Animated.Value(20)).current;
+
+  useEffect(() => {
+    const ease = Easing.bezier(0.22, 0.61, 0.36, 1);
+    Animated.stagger(140, [
+      Animated.parallel([
+        Animated.timing(titleOpacity, { toValue: 1, duration: 600, easing: ease, useNativeDriver: true }),
+        Animated.timing(titleTranslateY, { toValue: 0, duration: 600, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(subtitleOpacity, { toValue: 1, duration: 650, easing: ease, useNativeDriver: true }),
+        Animated.timing(subtitleTranslateY, { toValue: 0, duration: 650, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(cardsOpacity, { toValue: 1, duration: 550, easing: ease, useNativeDriver: true }),
+        Animated.spring(cardsScale, { toValue: 1, friction: 7, tension: 50, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(ctaOpacity, { toValue: 1, duration: 520, easing: ease, useNativeDriver: true }),
+        Animated.timing(ctaTranslateY, { toValue: 0, duration: 520, easing: ease, useNativeDriver: true }),
+      ]),
+    ]).start();
+  }, [titleOpacity, titleTranslateY, subtitleOpacity, subtitleTranslateY, cardsOpacity, cardsScale, ctaOpacity, ctaTranslateY]);
 
   return (
     <LinearGradient
@@ -82,15 +113,15 @@ function AnalysisOverviewScreen() {
     >
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
-          <Text style={[styles.title, { fontSize: 36 * scale, lineHeight: 42 * scale }]}>
+          <Animated.Text style={[styles.title, { fontSize: 36 * scale, lineHeight: 42 * scale, opacity: titleOpacity, transform: [{ translateY: titleTranslateY }] }]}> 
             {"Get instant pros, cons,\noutcomes & alternatives"}
-          </Text>
-          <Text style={[styles.subtitle, { fontSize: 18 * scale }]}>
+          </Animated.Text>
+          <Animated.Text style={[styles.subtitle, { fontSize: 18 * scale, opacity: subtitleOpacity, transform: [{ translateY: subtitleTranslateY }] }]}> 
             Powered by advanced AI analysis for smarter choices
-          </Text>
+          </Animated.Text>
         </View>
 
-        <View style={styles.cards}>
+        <Animated.View style={[styles.cards, { opacity: cardsOpacity, transform: [{ scale: cardsScale }] }]}> 
           <FeatureCard
             icon={<CheckIcon size={44} />}
             title="Pros Analysis"
@@ -111,11 +142,13 @@ function AnalysisOverviewScreen() {
             title="Smart Alternatives"
             subtitle="Explore different options and solutions"
           />
-        </View>
+        </Animated.View>
 
-        <TouchableOpacity style={styles.ctaButton} activeOpacity={0.9} onPress={() => navigation.navigate('ConfidenceIntro' as never)}>
-          <Text style={styles.ctaLabel}>Next</Text>
-        </TouchableOpacity>
+        <Animated.View style={{ opacity: ctaOpacity, transform: [{ translateY: ctaTranslateY }] }}>
+          <TouchableOpacity style={styles.ctaButton} activeOpacity={0.9} onPress={() => navigation.navigate('ConfidenceIntro' as never)}>
+            <Text style={styles.ctaLabel}>Next</Text>
+          </TouchableOpacity>
+        </Animated.View>
 
      
       </ScrollView>

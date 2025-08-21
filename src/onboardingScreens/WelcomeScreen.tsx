@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, ScrollView, useWindowDimensions } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View, ScrollView, useWindowDimensions, Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import Svg, { Path, Circle } from 'react-native-svg';
@@ -9,6 +9,46 @@ function WelcomeScreen() {
   const { width, height } = useWindowDimensions();
   const scale = Math.min(width / 375, 1);
   const vScale = Math.min(height / 812, 1);
+
+  // Animated values
+  const titleOpacity = useRef(new Animated.Value(0)).current;
+  const titleTranslateY = useRef(new Animated.Value(12)).current;
+  const subtitleOpacity = useRef(new Animated.Value(0)).current;
+  const subtitleTranslateY = useRef(new Animated.Value(18)).current;
+  const illoScale = useRef(new Animated.Value(0.92)).current;
+  const illoOpacity = useRef(new Animated.Value(0)).current;
+  const ctaOpacity = useRef(new Animated.Value(0)).current;
+  const ctaTranslateY = useRef(new Animated.Value(20)).current;
+  const linkOpacity = useRef(new Animated.Value(0)).current;
+  const linkTranslateY = useRef(new Animated.Value(22)).current;
+
+  useEffect(() => {
+    // Smooth ease-out curve
+    const tEase = Easing.bezier(0.22, 0.61, 0.36, 1);
+
+    Animated.stagger(140, [
+      Animated.parallel([
+        Animated.timing(titleOpacity, { toValue: 1, duration: 600, easing: tEase, useNativeDriver: true }),
+        Animated.timing(titleTranslateY, { toValue: 0, duration: 600, easing: tEase, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(subtitleOpacity, { toValue: 1, duration: 650, easing: tEase, useNativeDriver: true }),
+        Animated.timing(subtitleTranslateY, { toValue: 0, duration: 650, easing: tEase, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(illoOpacity, { toValue: 1, duration: 550, easing: tEase, useNativeDriver: true }),
+        Animated.spring(illoScale, { toValue: 1, friction: 7, tension: 50, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(ctaOpacity, { toValue: 1, duration: 520, easing: tEase, useNativeDriver: true }),
+        Animated.timing(ctaTranslateY, { toValue: 0, duration: 520, easing: tEase, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(linkOpacity, { toValue: 1, duration: 520, easing: tEase, useNativeDriver: true }),
+        Animated.timing(linkTranslateY, { toValue: 0, duration: 520, easing: tEase, useNativeDriver: true }),
+      ]),
+    ]).start();
+  }, [titleOpacity, titleTranslateY, subtitleOpacity, subtitleTranslateY, illoScale, illoOpacity, ctaOpacity, ctaTranslateY, linkOpacity, linkTranslateY]);
   return (
     <LinearGradient
       colors={["#0C141A", "#0E2A38", "#1F4A5E", "#58BFD9"]}
@@ -18,16 +58,16 @@ function WelcomeScreen() {
       style={styles.container}
     >
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={[styles.headerContainer, { paddingTop: 64 * vScale }]}>
-          <Text style={[styles.title, { fontSize: 46 * scale, lineHeight: 54 * scale }]}>
+        <View style={[styles.headerContainer, { paddingTop: 64 * vScale }]}> 
+          <Animated.Text style={[styles.title, { fontSize: 46 * scale, lineHeight: 54 * scale, opacity: titleOpacity, transform: [{ translateY: titleTranslateY }] }]}> 
             Welcome to AI Life{"\n"}Decision Mapper
-          </Text>
-          <Text style={[styles.subtitle, { fontSize: 20 * scale, lineHeight: 28 * scale }]}>
+          </Animated.Text>
+          <Animated.Text style={[styles.subtitle, { fontSize: 20 * scale, lineHeight: 28 * scale, opacity: subtitleOpacity, transform: [{ translateY: subtitleTranslateY }] }]}> 
             {"Make Smarter Choices with\nAI-Powered Clarity"}
-          </Text>
+          </Animated.Text>
         </View>
 
-        <View style={styles.illustrationContainer}>
+        <Animated.View style={[styles.illustrationContainer, { opacity: illoOpacity, transform: [{ scale: illoScale }] }]}> 
           <Svg width={Math.min(240 * scale + 40, 240)} height={Math.min(300 * vScale + 40, 300)} viewBox="0 0 240 300">
           <Path d="M120 20 C70 80 60 150 120 240 C180 150 170 80 120 20 Z" fill="none" stroke="#4DB1E3" strokeWidth={6} />
           <Path d="M60 180 C100 170 140 170 180 180" fill="none" stroke="#F8B64C" strokeWidth={8} strokeLinecap="round" />
@@ -37,20 +77,24 @@ function WelcomeScreen() {
           <Path d="M52 186 C40 194 40 206 52 214" fill="none" stroke="#F8B64C" strokeWidth={6} strokeLinecap="round" />
           <Path d="M188 186 C200 194 200 206 188 214" fill="none" stroke="#F8B64C" strokeWidth={6} strokeLinecap="round" />
           </Svg>
-        </View>
+        </Animated.View>
 
         <View style={styles.footerContainer}>
-          <TouchableOpacity
-            activeOpacity={0.9}
-            style={[styles.ctaButton, { paddingVertical: 16 * vScale }]}
-            onPress={() => navigation.navigate('DescribeDecision' as never)}
-          >
-            <Text style={[styles.ctaLabel, { fontSize: 18 * scale }]}>Start My First Decision</Text>
-          </TouchableOpacity>
+          <Animated.View style={{ opacity: ctaOpacity, transform: [{ translateY: ctaTranslateY }] }}>
+            <TouchableOpacity
+              activeOpacity={0.9}
+              style={[styles.ctaButton, { paddingVertical: 16 * vScale }]}
+              onPress={() => navigation.navigate('DescribeDecision' as never)}
+            >
+              <Text style={[styles.ctaLabel, { fontSize: 18 * scale }]}>Start My First Decision</Text>
+            </TouchableOpacity>
+          </Animated.View>
 
-          <TouchableOpacity onPress={() => {}} activeOpacity={0.7} style={styles.loginLinkWrapper}>
-            <Text style={[styles.loginLink, { fontSize: 16 * scale }]}>Already have an account? Log In</Text>
-          </TouchableOpacity>
+          <Animated.View style={[styles.loginLinkWrapper, { opacity: linkOpacity, transform: [{ translateY: linkTranslateY }] }]}> 
+            <TouchableOpacity onPress={() => {}} activeOpacity={0.7}>
+              <Text style={[styles.loginLink, { fontSize: 16 * scale }]}>Already have an account? Log In</Text>
+            </TouchableOpacity>
+          </Animated.View>
          
         </View>
       </ScrollView>

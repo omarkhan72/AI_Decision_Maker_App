@@ -1,66 +1,230 @@
-import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, useWindowDimensions, Linking } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  useWindowDimensions,
+  Linking,
+  Animated,
+  Easing,
+  StatusBar,
+  SafeAreaView,
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Svg, { Path } from 'react-native-svg';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 function AppLogo({ size }: { size: number }) {
   const outer = size;
   const inner = size * 0.65;
   const radiusOuter = size * 0.22;
   const radiusInner = inner * 0.28;
+
   return (
-    <View style={{ width: outer, height: outer, borderRadius: radiusOuter, backgroundColor: 'rgba(0,0,0,0.25)', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.4, shadowRadius: 18, elevation: 12 }}>
-      <View style={{ width: inner, height: inner, borderRadius: radiusInner, backgroundColor: '#4DB1E3' }} />
+    <View
+      style={{
+        width: outer,
+        height: outer,
+        borderRadius: radiusOuter,
+        backgroundColor: 'rgba(0,0,0,0.25)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: '#000',
+        shadowOpacity: 0.4,
+        shadowRadius: 18,
+        shadowOffset: { width: 0, height: 8 },
+        elevation: 12,
+      }}
+    >
+      <View
+        style={{
+          width: inner,
+          height: inner,
+          borderRadius: radiusInner,
+          backgroundColor: '#4DB1E3',
+        }}
+      />
     </View>
   );
 }
 
+function GoogleG({ size = 22 }: { size?: number }) {
+  const s = size;
+  return (
+    <Svg width={s} height={s} viewBox="0 0 24 24">
+      <Path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+      <Path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+      <Path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+      <Path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+    </Svg>
+  );
+}
+
 function SignInScreen() {
-  const navigation = useNavigation();
   const { width, height } = useWindowDimensions();
   const scale = Math.min(width / 375, 1);
   const vScale = Math.min(height / 812, 1);
 
-  const logoSize = Math.min(152 * scale + 8, 168);
+  const logoSize = Math.min(132 * scale, 150);
+
+  const logoOpacity = useRef(new Animated.Value(0)).current;
+  const logoScale = useRef(new Animated.Value(0.92)).current;
+  const titleOpacity = useRef(new Animated.Value(0)).current;
+  const titleTranslateY = useRef(new Animated.Value(12)).current;
+  const subtitleOpacity = useRef(new Animated.Value(0)).current;
+  const subtitleTranslateY = useRef(new Animated.Value(18)).current;
+  const googleOpacity = useRef(new Animated.Value(0)).current;
+  const googleTranslateY = useRef(new Animated.Value(20)).current;
+  const orOpacity = useRef(new Animated.Value(0)).current;
+  const orTranslateY = useRef(new Animated.Value(20)).current;
+  const emailOpacity = useRef(new Animated.Value(0)).current;
+  const emailTranslateY = useRef(new Animated.Value(20)).current;
+  const footerOpacity = useRef(new Animated.Value(0)).current;
+  const footerTranslateY = useRef(new Animated.Value(20)).current;
+
+  useEffect(() => {
+    const ease = Easing.bezier(0.22, 0.61, 0.36, 1);
+    Animated.stagger(130, [
+      Animated.parallel([
+        Animated.timing(logoOpacity, { toValue: 1, duration: 520, easing: ease, useNativeDriver: true }),
+        Animated.spring(logoScale, { toValue: 1, friction: 7, tension: 50, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(titleOpacity, { toValue: 1, duration: 560, easing: ease, useNativeDriver: true }),
+        Animated.timing(titleTranslateY, { toValue: 0, duration: 560, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(subtitleOpacity, { toValue: 1, duration: 600, easing: ease, useNativeDriver: true }),
+        Animated.timing(subtitleTranslateY, { toValue: 0, duration: 600, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(googleOpacity, { toValue: 1, duration: 520, easing: ease, useNativeDriver: true }),
+        Animated.timing(googleTranslateY, { toValue: 0, duration: 520, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(orOpacity, { toValue: 1, duration: 520, easing: ease, useNativeDriver: true }),
+        Animated.timing(orTranslateY, { toValue: 0, duration: 520, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(emailOpacity, { toValue: 1, duration: 520, easing: ease, useNativeDriver: true }),
+        Animated.timing(emailTranslateY, { toValue: 0, duration: 520, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(footerOpacity, { toValue: 1, duration: 520, easing: ease, useNativeDriver: true }),
+        Animated.timing(footerTranslateY, { toValue: 0, duration: 520, easing: ease, useNativeDriver: true }),
+      ]),
+    ]).start();
+  }, [
+    logoOpacity,
+    logoScale,
+    titleOpacity,
+    titleTranslateY,
+    subtitleOpacity,
+    subtitleTranslateY,
+    googleOpacity,
+    googleTranslateY,
+    orOpacity,
+    orTranslateY,
+    emailOpacity,
+    emailTranslateY,
+    footerOpacity,
+    footerTranslateY,
+  ]);
 
   return (
-    <LinearGradient colors={["#0D1013", "#103643", "#54B7DB"]} locations={[0, 0.55, 1]} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} style={styles.container}>
+    <LinearGradient
+      colors={["#0C1216", "#163A45", "#57B8DE"]}
+      locations={[0, 0.52, 1]}
+      start={{ x: 0.5, y: 0 }}
+      end={{ x: 0.5, y: 1 }}
+      style={styles.container}
+    >
+      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={styles.logoWrap}>
+        <Animated.View style={[styles.logoWrap, { opacity: logoOpacity, transform: [{ scale: logoScale }] }]}> 
           <AppLogo size={logoSize} />
-        </View>
+        </Animated.View>
 
         <View style={styles.headerWrap}>
-          <Text style={[styles.title, { fontSize: 36 * scale, lineHeight: 42 * scale }]}>Welcome Back</Text>
-          <Text style={[styles.subtitle, { fontSize: 18 * scale }]}>Sign in to continue</Text>
+          <Animated.Text
+            style={[
+              styles.title,
+              {
+                fontSize: 32 * scale,
+                lineHeight: 36 * scale,
+                opacity: titleOpacity,
+                transform: [{ translateY: titleTranslateY }],
+              },
+            ]}
+          >
+            Welcome Back
+          </Animated.Text>
+          <Animated.Text
+            style={[
+              styles.subtitle,
+              {
+                fontSize: 17 * scale,
+                lineHeight: 22 * scale,
+                opacity: subtitleOpacity,
+                transform: [{ translateY: subtitleTranslateY }],
+              },
+            ]}
+          >
+            Sign in to continue
+          </Animated.Text>
         </View>
 
-        <TouchableOpacity activeOpacity={0.9} style={[styles.googleBtn, { paddingVertical: 14 * vScale }]}> 
-          <View style={styles.btnContent}> 
-            <View style={[styles.leftIconWrap, { backgroundColor: 'transparent' }]}> 
-              <GoogleG size={22 * scale} />
+        <Animated.View style={{ opacity: googleOpacity, transform: [{ translateY: googleTranslateY }] }}>
+          <TouchableOpacity activeOpacity={0.9} style={[styles.googleBtn, { height: 56 * vScale }]}> 
+            <View style={styles.btnContent}> 
+              <View style={styles.leftIconWrap}> 
+                <GoogleG size={22 * scale} />
+              </View>
+              <Text style={[styles.googleLabel, { fontSize: 16 * scale }]}>Continue with Google</Text>
+              <View style={styles.rightSpacer} />
             </View>
-            <Text style={[styles.googleLabel, { fontSize: 18 * scale }]}>Continue with Google</Text>
-          </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </Animated.View>
 
-        <Text style={[styles.orText, { fontSize: 16 * scale }]}>Or continue with email</Text>
+        <Animated.Text
+          style={[
+            styles.orText,
+            { fontSize: 15 * scale, opacity: orOpacity, transform: [{ translateY: orTranslateY }] },
+          ]}
+        >
+          Or continue with email
+        </Animated.Text>
 
-        <TouchableOpacity activeOpacity={0.9} style={[styles.emailBtn, { paddingVertical: 16 * vScale }]}> 
-          <View style={styles.btnContent}>
-            <View style={[styles.leftIconWrap, styles.leftIconWrapEmail]}> 
-              <Icon name="email-outline" size={20 * scale} color="#FFFFFF" />
-            </View>
-            <Text style={[styles.emailLabel, { fontSize: 18 * scale }]}>Sign in with Email</Text>
-          </View>
-        </TouchableOpacity>
+        <Animated.View style={{ opacity: emailOpacity, transform: [{ translateY: emailTranslateY }] }}>
+          <TouchableOpacity activeOpacity={0.9} style={[styles.emailBtn, { height: 56 * vScale }]}> 
+            <LinearGradient
+              colors={["#66C8F2", "#3DA5DC"]}
+              start={{ x: 0.5, y: 0 }}
+              end={{ x: 0.5, y: 1 }}
+              style={styles.emailGradient}
+            >
+              <View style={styles.btnContent}>
+                <View style={styles.leftIconWrap}> 
+                  <View style={styles.iconBadge}>
+                    <Icon name="email-outline" size={18 * scale} color="#FFFFFF" />
+                  </View>
+                </View>
+                <Text style={[styles.emailLabel, { fontSize: 16 * scale }]}>Sign in with Email</Text>
+                <View style={styles.rightSpacer} />
+              </View>
+            </LinearGradient>
+          </TouchableOpacity>
+        </Animated.View>
 
-        <Text style={[styles.signupText, { fontSize: 16 * scale }]}>Don't have an account? <Text onPress={() => {}} style={styles.signupLink}>Sign Up</Text></Text>
+        <Animated.View style={{ opacity: footerOpacity, transform: [{ translateY: footerTranslateY }] }}>
+          <Text style={[styles.signupText, { fontSize: 16 * scale }]}>Don't have an account? <Text onPress={() => {}} style={styles.signupLink}>Sign Up</Text></Text>
 
-        <Text style={[styles.legalText, { fontSize: 14 * scale }]}>By continuing, you agree to our <Text style={styles.link} onPress={() => Linking.openURL('#')}>Terms of Service</Text> and <Text style={styles.link} onPress={() => Linking.openURL('#')}>Privacy Policy</Text></Text>
+          <Text style={[styles.legalText, { fontSize: 13 * scale }]}>By continuing, you agree to our <Text style={styles.link} onPress={() => Linking.openURL('#')}>Terms of Service</Text> and <Text style={styles.link} onPress={() => Linking.openURL('#')}>Privacy Policy</Text></Text>
+        </Animated.View>
 
+        <SafeAreaView style={{ height: 16 }} />
       </ScrollView>
     </LinearGradient>
   );
@@ -71,15 +235,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingTop: 36,
+    paddingTop: 60,
     paddingBottom: 32,
     alignItems: 'center',
   },
   logoWrap: {
-    marginTop: 8,
+    marginTop: 80,
+    marginBottom: 40,
   },
   headerWrap: {
-    marginTop: 28,
+    marginBottom: 60,
     alignItems: 'center',
   },
   title: {
@@ -87,98 +252,112 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   subtitle: {
-    color: '#B7C7D1',
+    color: 'rgba(255,255,255,0.72)',
     marginTop: 12,
   },
   googleBtn: {
-    marginTop: 28,
-    alignSelf: 'stretch',
-    marginHorizontal: 20,
+    marginTop: 0,
+    alignSelf: 'center',
+    width: '100%',
+    maxWidth: 360,
+    marginHorizontal: 24,
     backgroundColor: '#FFFFFF',
-    borderRadius: 18,
+    borderRadius: 22,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: '#E7EEF2',
     shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    elevation: 6,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.14,
+    shadowRadius: 18,
+    elevation: 8,
   },
   btnContent: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
-  },
-  leftIcon: {
-    position: 'absolute',
-    left: 20,
+    minHeight: 56,
+    paddingHorizontal: 20,
   },
   leftIconWrap: {
-    position: 'absolute',
-    left: 20,
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 44,
+    height: 56,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  leftIconWrapEmail: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
+  rightSpacer: {
+    width: 44,
+    height: 56,
   },
   googleLabel: {
     color: '#1A2B33',
-    fontWeight: '700',
+    fontWeight: '600',
+    fontSize: 15,
+    letterSpacing: 0.2,
+    textAlign: 'center',
+    flex: 1,
   },
   orText: {
-    color: '#B7C7D1',
-    marginTop: 22,
+    color: 'rgba(255,255,255,0.6)',
+    marginTop: 20,
+    marginBottom: 20,
+    fontSize: 14,
+    textAlign: 'center',
   },
   emailBtn: {
-    marginTop: 18,
-    alignSelf: 'stretch',
-    marginHorizontal: 20,
-    backgroundColor: '#4DB1E3',
-    borderRadius: 18,
+    alignSelf: 'center',
+    width: '100%',
+    maxWidth: 360,
+    marginHorizontal: 24,
+    borderRadius: 22,
+    overflow: 'hidden',
     shadowColor: '#000',
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 6,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.16,
+    shadowRadius: 18,
+    elevation: 8,
+  },
+  emailGradient: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 22,
   },
   emailLabel: {
     color: '#FFFFFF',
-    fontWeight: '700',
+    fontWeight: '600',
+    fontSize: 15,
+    letterSpacing: 0.2,
+    textAlign: 'center',
+    flex: 1,
+  },
+  iconBadge: {
+    width: 28,
+    height: 28,
+    borderRadius: 6,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255,255,255,0.9)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   signupText: {
-    color: '#B7C7D1',
-    marginTop: 24,
+    color: 'rgba(255,255,255,0.8)',
+    marginTop: 40,
+    textAlign: 'center',
   },
   signupLink: {
     color: '#FEB64D',
     fontWeight: '700',
   },
   legalText: {
-    color: '#B7C7D1',
-    marginTop: 18,
+    color: 'rgba(255,255,255,0.6)',
+    marginTop: 24,
     textAlign: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: 32,
+    lineHeight: 20,
   },
   link: {
     color: '#FEB64D',
-    textDecorationLine: 'underline',
+    textDecorationLine: 'none',
+    fontWeight: '500',
   },
-
 });
 
 export default SignInScreen;
-
-// Google multi-color G mark as SVG
-function GoogleG({ size = 22 }: { size?: number }) {
-  const s = size;
-  return (
-    <Svg width={s} height={s} viewBox="0 0 24 24">
-      <Path d="M21.35 11.1h-9.18v2.98h5.26c-.23 1.36-1.6 3.98-5.26 3.98-3.17 0-5.75-2.62-5.75-5.86s2.58-5.86 5.75-5.86c1.8 0 3.01.77 3.7 1.43l2.52-2.43C16.8 3.97 14.83 3 12.17 3 6.98 3 2.77 7.26 2.77 12.2S6.98 21.4 12.17 21.4c6.86 0 9.33-4.81 9.33-7.77 0-.53-.06-.88-.15-1.53z" fill="#4285F4"/>
-      <Path d="M3.65 8.62l2.45 1.8c.66-1.67 2.22-2.84 4.05-2.84 1.18 0 2.24.41 3.08 1.21l2.31-2.36C14.77 4.5 13.53 4 12.17 4 9.21 4 6.66 5.69 5.5 8.02z" fill="#EA4335"/>
-      <Path d="M12.17 20.4c2.83 0 5.21-1.86 5.86-4.47l-2.86-2.22c-.76 2.29-2.79 3.29-5 3.29-2.43 0-4.49-1.64-5.23-3.86l-2.87 2.21c1.49 2.97 4.55 5.05 8.1 5.05z" fill="#34A853"/>
-      <Path d="M3.65 15.35l2.87-2.21c-.19-.57-.29-1.18-.29-1.84 0-.64.1-1.26.29-1.83l-2.87-2.85C2.95 7.87 2.57 9.47 2.57 11.3c0 1.83.38 3.42 1.08 4.05z" fill="#FBBC05"/>
-    </Svg>
-  );
-}
-
-
