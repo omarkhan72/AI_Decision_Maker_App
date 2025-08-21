@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, useWindowDimensions, Animated, Easing, SafeAreaView, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, useWindowDimensions, Animated, Easing, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import Svg, { Circle, Path } from 'react-native-svg';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 function HeroIllustration({ size }: { size: number }) {
   const r = size / 2;

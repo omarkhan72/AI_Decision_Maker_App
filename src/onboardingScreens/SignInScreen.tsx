@@ -10,11 +10,14 @@ import {
   Animated,
   Easing,
   StatusBar,
-  SafeAreaView,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../App';
 import LinearGradient from 'react-native-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 function AppLogo({ size }: { size: number }) {
   const outer = size;
@@ -62,7 +65,8 @@ function GoogleG({ size = 22 }: { size?: number }) {
   );
 }
 
-function SignInScreen() {
+const SignInScreen = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { width, height } = useWindowDimensions();
   const scale = Math.min(width / 375, 1);
   const vScale = Math.min(height / 812, 1);
@@ -176,47 +180,34 @@ function SignInScreen() {
           </Animated.Text>
         </View>
 
-        <Animated.View style={{ opacity: googleOpacity, transform: [{ translateY: googleTranslateY }] }}>
-          <TouchableOpacity activeOpacity={0.9} style={[styles.googleBtn, { height: 56 * vScale }]}> 
-            <View style={styles.btnContent}> 
-              <View style={styles.leftIconWrap}> 
-                <GoogleG size={22 * scale} />
-              </View>
-              <Text style={[styles.googleLabel, { fontSize: 16 * scale }]}>Continue with Google</Text>
-              <View style={styles.rightSpacer} />
-            </View>
-          </TouchableOpacity>
-        </Animated.View>
-
-        <Animated.Text
-          style={[
-            styles.orText,
-            { fontSize: 15 * scale, opacity: orOpacity, transform: [{ translateY: orTranslateY }] },
-          ]}
-        >
-          Or continue with email
-        </Animated.Text>
-
-        <Animated.View style={{ opacity: emailOpacity, transform: [{ translateY: emailTranslateY }] }}>
-          <TouchableOpacity activeOpacity={0.9} style={[styles.emailBtn, { height: 56 * vScale }]}> 
-            <LinearGradient
-              colors={["#66C8F2", "#3DA5DC"]}
-              start={{ x: 0.5, y: 0 }}
-              end={{ x: 0.5, y: 1 }}
-              style={styles.emailGradient}
-            >
+        <View style={styles.buttonsContainer}>
+          <Animated.View style={{ opacity: googleOpacity, transform: [{ translateY: googleTranslateY }] }}>
+            <TouchableOpacity activeOpacity={0.9} style={styles.googleBtn} onPress={() => navigation.navigate('Decisions')}> 
               <View style={styles.btnContent}>
-                <View style={styles.leftIconWrap}> 
-                  <View style={styles.iconBadge}>
-                    <Icon name="email-outline" size={18 * scale} color="#FFFFFF" />
-                  </View>
-                </View>
-                <Text style={[styles.emailLabel, { fontSize: 16 * scale }]}>Sign in with Email</Text>
-                <View style={styles.rightSpacer} />
+                <GoogleG size={22 * scale} />
+                <Text style={[styles.googleLabel, { fontSize: 16 * scale }]}>Continue with Google</Text>
               </View>
-            </LinearGradient>
-          </TouchableOpacity>
-        </Animated.View>
+            </TouchableOpacity>
+          </Animated.View>
+
+          <Animated.Text
+            style={[
+              styles.orText,
+              { fontSize: 15 * scale, opacity: orOpacity, transform: [{ translateY: orTranslateY }] },
+            ]}
+          >
+            Or continue with email
+          </Animated.Text>
+
+          <Animated.View style={{ opacity: emailOpacity, transform: [{ translateY: emailTranslateY }] }}>
+            <TouchableOpacity activeOpacity={0.9} style={styles.emailBtn}>
+              <View style={styles.btnContent}>
+                <Icon name="email-outline" size={22 * scale} color="#FFFFFF" />
+                <Text style={[styles.emailLabel, { fontSize: 16 * scale }]}>Sign in with Email</Text>
+              </View>
+            </TouchableOpacity>
+          </Animated.View>
+        </View>
 
         <Animated.View style={{ opacity: footerOpacity, transform: [{ translateY: footerTranslateY }] }}>
           <Text style={[styles.signupText, { fontSize: 16 * scale }]}>Don't have an account? <Text onPress={() => {}} style={styles.signupLink}>Sign Up</Text></Text>
@@ -238,13 +229,18 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 32,
     alignItems: 'center',
+    paddingHorizontal: 24,
   },
   logoWrap: {
     marginTop: 80,
     marginBottom: 40,
   },
   headerWrap: {
-    marginBottom: 60,
+    marginBottom: 40,
+    alignItems: 'center',
+  },
+  buttonsContainer: {
+    width: '100%',
     alignItems: 'center',
   },
   title: {
@@ -256,44 +252,27 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   googleBtn: {
-    marginTop: 0,
-    alignSelf: 'center',
     width: '100%',
-    maxWidth: 360,
-    marginHorizontal: 24,
+    height: 56,
     backgroundColor: '#FFFFFF',
-    borderRadius: 22,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: '#E7EEF2',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.14,
-    shadowRadius: 18,
-    elevation: 8,
+    borderRadius: 28,
+    shadowColor: 'rgba(0,0,0,0.08)',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 1,
+    shadowRadius: 15,
+    elevation: 7,
   },
   btnContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    minHeight: 56,
-    paddingHorizontal: 20,
-  },
-  leftIconWrap: {
-    width: 44,
-    height: 56,
-    alignItems: 'center',
     justifyContent: 'center',
-  },
-  rightSpacer: {
-    width: 44,
-    height: 56,
+    height: '100%',
   },
   googleLabel: {
     color: '#1A2B33',
-    fontWeight: '600',
-    fontSize: 15,
-    letterSpacing: 0.2,
-    textAlign: 'center',
-    flex: 1,
+    fontWeight: '500',
+    fontSize: 16,
+    marginLeft: 12,
   },
   orText: {
     color: 'rgba(255,255,255,0.6)',
@@ -301,41 +280,24 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontSize: 14,
     textAlign: 'center',
+    fontWeight: '500',
   },
   emailBtn: {
-    alignSelf: 'center',
     width: '100%',
-    maxWidth: 360,
-    marginHorizontal: 24,
-    borderRadius: 22,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.16,
-    shadowRadius: 18,
-    elevation: 8,
-  },
-  emailGradient: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 22,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#3DA5DC',
+    shadowColor: 'rgba(0,0,0,0.12)',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 1,
+    shadowRadius: 15,
+    elevation: 7,
   },
   emailLabel: {
     color: '#FFFFFF',
-    fontWeight: '600',
-    fontSize: 15,
-    letterSpacing: 0.2,
-    textAlign: 'center',
-    flex: 1,
-  },
-  iconBadge: {
-    width: 28,
-    height: 28,
-    borderRadius: 6,
-    borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.9)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    fontWeight: '500',
+    fontSize: 16,
+    marginLeft: 12,
   },
   signupText: {
     color: 'rgba(255,255,255,0.8)',

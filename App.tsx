@@ -8,8 +8,18 @@ import DescribeDecisionScreen from './src/onboardingScreens/DescribeDecisionScre
 import AnalysisOverviewScreen from './src/onboardingScreens/AnalysisOverviewScreen';
 import ConfidenceIntroScreen from './src/onboardingScreens/ConfidenceIntroScreen';
 import SignInScreen from './src/onboardingScreens/SignInScreen';
+import DecisionsScreen from './src/screens/DecisionsScreen';
 
-const Stack = createNativeStackNavigator();
+export type RootStackParamList = {
+  Welcome: undefined;
+  DescribeDecision: undefined;
+  AnalysisOverview: undefined;
+  ConfidenceIntro: undefined;
+  SignIn: undefined;
+  Decisions: undefined;
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function App() {
   return (
@@ -22,6 +32,7 @@ function App() {
           <Stack.Screen name="AnalysisOverview" component={AnalysisOverviewScreen} />
           <Stack.Screen name="ConfidenceIntro" component={ConfidenceIntroScreen} />
           <Stack.Screen name="SignIn" component={SignInScreen} />
+          <Stack.Screen name="Decisions" component={DecisionsScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
