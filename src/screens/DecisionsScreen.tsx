@@ -69,7 +69,7 @@ const DecisionCard: React.FC<DecisionCardProps> = ({ title, description, timesta
   </View>
 );
 
-const DecisionsScreen = () => {
+const DecisionsScreen = ({ navigation }: { navigation: any }) => {
   return (
     <LinearGradient colors={['#1D3A4E', '#4A8A9E']} style={styles.flexOne}>
         <SafeAreaView style={styles.flexOne}>
@@ -112,7 +112,7 @@ const DecisionsScreen = () => {
                 showsVerticalScrollIndicator={false}
             />
 
-            <TouchableOpacity style={styles.fab}>
+            <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('DescribeScreen')}>
                 <Icon name="plus" size={28} color="#FFFFFF" />
             </TouchableOpacity>
         </SafeAreaView>

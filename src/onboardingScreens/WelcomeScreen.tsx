@@ -84,14 +84,14 @@ function WelcomeScreen() {
             <TouchableOpacity
               activeOpacity={0.9}
               style={[styles.ctaButton, { paddingVertical: 16 * vScale }]}
-              onPress={() => navigation.navigate('DescribeDecision' as never)}
+              onPress={() => navigation.navigate('AnalysisOverview' as never)}
             >
               <Text style={[styles.ctaLabel, { fontSize: 18 * scale }]}>Start My First Decision</Text>
             </TouchableOpacity>
           </Animated.View>
 
           <Animated.View style={[styles.loginLinkWrapper, { opacity: linkOpacity, transform: [{ translateY: linkTranslateY }] }]}> 
-            <TouchableOpacity onPress={() => {}} activeOpacity={0.7}>
+            <TouchableOpacity onPress={() => navigation.navigate('SignIn' as never)} activeOpacity={0.7}>
               <Text style={[styles.loginLink, { fontSize: 16 * scale }]}>Already have an account? Log In</Text>
             </TouchableOpacity>
           </Animated.View>
