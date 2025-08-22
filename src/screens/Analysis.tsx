@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -61,6 +62,7 @@ const InfoCard: React.FC<InfoCardProps> = ({ title, items, icon, iconColor, icon
 );
 
 const AnalysisScreen = () => {
+  const navigation = useNavigation();
   return (
     <LinearGradient colors={['#1D3A4E', '#4A8A9E']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -94,11 +96,13 @@ const AnalysisScreen = () => {
           iconColor="#FFFFFF"
           iconBgColor="#5856D6"
         />
-        <InfoCard
-          title="KEY QUESTIONS"
-          items={analysisData.questions}
-          numbered
-        />
+                <TouchableOpacity onPress={() => navigation.navigate('Assistant' as never)}>
+          <InfoCard
+            title="KEY QUESTIONS"
+            items={analysisData.questions}
+            numbered
+          />
+        </TouchableOpacity>
 
         <TouchableOpacity style={styles.pdfButton}>
           <Icon name="file-pdf-box" size={24} color="#FFFFFF" />

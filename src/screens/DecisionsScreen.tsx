@@ -79,7 +79,7 @@ const DecisionsScreen = ({ navigation }: { navigation: any }) => {
                     <Icon name="lightbulb-on-outline" size={28} color="#66C8F2" />
                     <Text style={styles.headerTitle}>Decisions</Text>
                 </View>
-                <TouchableOpacity style={styles.profileContainer}>
+                                <TouchableOpacity style={styles.profileContainer} onPress={() => navigation.navigate('Setting')}>
                     <Image source={{ uri: 'https://i.pravatar.cc/150?u=a042581f4e29026704d' }} style={styles.profileImage} />
                     <View style={styles.notificationBadge} />
                 </TouchableOpacity>

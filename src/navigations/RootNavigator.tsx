@@ -7,6 +7,8 @@ import SignInScreen from '../onboardingScreens/SignInScreen';
 import DecisionsScreen from '../screens/DecisionsScreen';
 import DescribeScreen from '../screens/DescribeScreen';
 import AnalysisScreen from '../screens/Analysis';
+import AssistantScreen from '../screens/AssistantScreen';
+import SettingScreen from '../screens/SettingScreen';
 
 export type RootStackParamList = {
   Welcome: undefined;
@@ -15,7 +17,9 @@ export type RootStackParamList = {
   SignIn: undefined;
   Decisions: undefined;
     DescribeScreen: undefined;
-  Analysis: undefined;
+    Analysis: undefined;
+    Assistant: undefined;
+  Setting: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -29,7 +33,9 @@ function RootNavigator() {
       <Stack.Screen name="SignIn" component={SignInScreen} />
             <Stack.Screen name="Decisions" component={DecisionsScreen} />
             <Stack.Screen name="DescribeScreen" component={DescribeScreen} />
-      <Stack.Screen name="Analysis" component={AnalysisScreen} />
+            <Stack.Screen name="Analysis" component={AnalysisScreen} />
+            <Stack.Screen name="Assistant" component={AssistantScreen} />
+      <Stack.Screen name="Setting" component={SettingScreen} />
     </Stack.Navigator>
   );
 }
