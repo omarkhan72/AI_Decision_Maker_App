@@ -1,26 +1,23 @@
 import React, { useEffect, useRef } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, ScrollView, useWindowDimensions, Animated, Easing } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Animated, Easing, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import Svg, { Path, Circle } from 'react-native-svg';
 
 function WelcomeScreen() {
   const navigation = useNavigation();
-  const { width, height } = useWindowDimensions();
-  const scale = Math.min(width / 375, 1);
-  const vScale = Math.min(height / 812, 1);
 
   // Animated values
   const titleOpacity = useRef(new Animated.Value(0)).current;
-  const titleTranslateY = useRef(new Animated.Value(12)).current;
+  const titleTranslateY = useRef(new Animated.Value(20)).current;
   const subtitleOpacity = useRef(new Animated.Value(0)).current;
-  const subtitleTranslateY = useRef(new Animated.Value(18)).current;
-  const illoScale = useRef(new Animated.Value(0.92)).current;
+  const subtitleTranslateY = useRef(new Animated.Value(20)).current;
+  const illoScale = useRef(new Animated.Value(0.9)).current;
   const illoOpacity = useRef(new Animated.Value(0)).current;
   const ctaOpacity = useRef(new Animated.Value(0)).current;
   const ctaTranslateY = useRef(new Animated.Value(20)).current;
   const linkOpacity = useRef(new Animated.Value(0)).current;
-  const linkTranslateY = useRef(new Animated.Value(22)).current;
+  const linkTranslateY = useRef(new Animated.Value(20)).current;
 
   useEffect(() => {
     // Smooth ease-out curve
@@ -57,48 +54,49 @@ function WelcomeScreen() {
       end={{ x: 0.5, y: 1 }}
       style={styles.container}
     >
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={[styles.headerContainer, { paddingTop: 64 * vScale }]}> 
-          <Animated.Text style={[styles.title, { fontSize: 46 * scale, lineHeight: 54 * scale, opacity: titleOpacity, transform: [{ translateY: titleTranslateY }] }]}> 
-            Welcome to AI Life{"\n"}Decision Mapper
-          </Animated.Text>
-          <Animated.Text style={[styles.subtitle, { fontSize: 20 * scale, lineHeight: 28 * scale, opacity: subtitleOpacity, transform: [{ translateY: subtitleTranslateY }] }]}> 
-            {"Make Smarter Choices with\nAI-Powered Clarity"}
-          </Animated.Text>
-        </View>
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+            <View style={styles.headerContainer}>
+              <Animated.Text style={[styles.title, { opacity: titleOpacity, transform: [{ translateY: titleTranslateY }] }]}>
+                Welcome to AI Life{'\n'}Decision Mapper
+              </Animated.Text>
+              <Animated.Text style={[styles.subtitle, { opacity: subtitleOpacity, transform: [{ translateY: subtitleTranslateY }] }]}>
+                {"Make Smarter Choices with\nAI-Powered Clarity"}
+              </Animated.Text>
+            </View>
 
-        <Animated.View style={[styles.illustrationContainer, { opacity: illoOpacity, transform: [{ scale: illoScale }] }]}> 
-          <Svg width={Math.min(240 * scale + 40, 240)} height={Math.min(300 * vScale + 40, 300)} viewBox="0 0 240 300">
-          <Path d="M120 20 C70 80 60 150 120 240 C180 150 170 80 120 20 Z" fill="none" stroke="#4DB1E3" strokeWidth={6} />
-          <Path d="M60 180 C100 170 140 170 180 180" fill="none" stroke="#F8B64C" strokeWidth={8} strokeLinecap="round" />
-          <Circle cx={120} cy={180} r={6} fill="#4DB1E3" />
-          <Circle cx={60} cy={180} r={6} fill="#F8B64C" />
-          <Circle cx={180} cy={180} r={6} fill="#F8B64C" />
-          <Path d="M52 186 C40 194 40 206 52 214" fill="none" stroke="#F8B64C" strokeWidth={6} strokeLinecap="round" />
-          <Path d="M188 186 C200 194 200 206 188 214" fill="none" stroke="#F8B64C" strokeWidth={6} strokeLinecap="round" />
-          </Svg>
-        </Animated.View>
+            <Animated.View style={[styles.illustrationContainer, { opacity: illoOpacity, transform: [{ scale: illoScale }] }]}>
+              <Svg width="100%" height="100%" viewBox="0 0 240 300" preserveAspectRatio="xMidYMid meet">
+                <Path d="M120 20 C70 80 60 150 120 240 C180 150 170 80 120 20 Z" fill="none" stroke="#4DB1E3" strokeWidth={6} />
+                <Path d="M60 180 C100 170 140 170 180 180" fill="none" stroke="#F8B64C" strokeWidth={8} strokeLinecap="round" />
+                <Circle cx={120} cy={180} r={6} fill="#4DB1E3" />
+                <Circle cx={60} cy={180} r={6} fill="#F8B64C" />
+                <Circle cx={180} cy={180} r={6} fill="#F8B64C" />
+                <Path d="M52 186 C40 194 40 206 52 214" fill="none" stroke="#F8B64C" strokeWidth={6} strokeLinecap="round" />
+                <Path d="M188 186 C200 194 200 206 188 214" fill="none" stroke="#F8B64C" strokeWidth={6} strokeLinecap="round" />
+              </Svg>
+            </Animated.View>
 
-        <View style={styles.footerContainer}>
-          <Animated.View style={{ opacity: ctaOpacity, transform: [{ translateY: ctaTranslateY }] }}>
-            <TouchableOpacity
-              activeOpacity={0.9}
-              style={[styles.ctaButton, { paddingVertical: 16 * vScale }]}
-              onPress={() => navigation.navigate('AnalysisOverview' as never)}
-            >
-              <Text style={[styles.ctaLabel, { fontSize: 18 * scale }]}>Start My First Decision</Text>
-            </TouchableOpacity>
-          </Animated.View>
+            <View style={styles.footerContainer}>
+              <Animated.View style={{ opacity: ctaOpacity, transform: [{ translateY: ctaTranslateY }] }}>
+                <TouchableOpacity
+                  activeOpacity={0.9}
+                  style={styles.ctaButton}
+                  onPress={() => navigation.navigate('AnalysisOverview' as never)}
+                >
+                  <Text style={styles.ctaLabel}>Start My First Decision</Text>
+                </TouchableOpacity>
+              </Animated.View>
 
-          <Animated.View style={[styles.loginLinkWrapper, { opacity: linkOpacity, transform: [{ translateY: linkTranslateY }] }]}> 
-            <TouchableOpacity onPress={() => navigation.navigate('SignIn' as never)} activeOpacity={0.7}>
-              <Text style={[styles.loginLink, { fontSize: 16 * scale }]}>Already have an account? Log In</Text>
-            </TouchableOpacity>
-          </Animated.View>
-         
-        </View>
-      </ScrollView>
-    </LinearGradient>
+              <Animated.View style={[styles.loginLinkWrapper, { opacity: linkOpacity, transform: [{ translateY: linkTranslateY }] }]}>
+                <TouchableOpacity onPress={() => navigation.navigate('SignIn' as never)} activeOpacity={0.7}>
+                  <Text style={styles.loginLink}>Already have an account? Log In</Text>
+                </TouchableOpacity>
+              </Animated.View>
+            </View>
+          </ScrollView>
+        </SafeAreaView>
+      </LinearGradient>
   );
 }
 
@@ -106,26 +104,31 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  safeArea: {
+    flex: 1,
+  },
   scrollContent: {
     flexGrow: 1,
     justifyContent: 'space-between',
+    paddingHorizontal: '6%',
+    paddingTop: '8%', 
+    paddingBottom: '5%',
   },
   headerContainer: {
-    paddingHorizontal: 24,
-    paddingTop: 64,
+    alignItems: 'center',
   },
   title: {
     color: '#FFFFFF',
-    fontSize: 46,
+    fontSize: 36, // Adjusted to prevent wrapping
     fontWeight: '800',
-    lineHeight: 54,
+    lineHeight: 44,
     textAlign: 'center',
   },
   subtitle: {
     color: '#C1CFDA',
-    fontSize: 22,
+    fontSize: 18,
     marginTop: 18,
-    lineHeight: 30,
+    lineHeight: 26,
     letterSpacing: 0.2,
     textAlign: 'center',
   },
@@ -133,10 +136,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    minHeight: 280,
+    width: '100%',
+    marginVertical: 20,
   },
   footerContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 28,
+    paddingBottom: '3%',
   },
   ctaButton: {
     backgroundColor: '#FEB64D',
@@ -150,22 +155,18 @@ const styles = StyleSheet.create({
   },
   ctaLabel: {
     color: '#17313F',
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '800',
   },
   loginLinkWrapper: {
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 24,
   },
   loginLink: {
     color: '#B7C7D1',
     textDecorationLine: 'underline',
-    fontSize: 18,
+    fontSize: 16,
   },
- 
-  
-
- 
 });
 
 export default WelcomeScreen;
