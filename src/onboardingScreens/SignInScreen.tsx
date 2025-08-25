@@ -91,6 +91,8 @@ const SignInScreen = () => {
   const emailTranslateY = useRef(new Animated.Value(20)).current;
   const footerOpacity = useRef(new Animated.Value(0)).current;
   const footerTranslateY = useRef(new Animated.Value(20)).current;
+  const skipOpacity = useRef(new Animated.Value(0)).current;
+  const skipTranslateY = useRef(new Animated.Value(20)).current;
 
   useEffect(() => {
     const ease = Easing.bezier(0.22, 0.61, 0.36, 1);
@@ -123,6 +125,10 @@ const SignInScreen = () => {
         Animated.timing(footerOpacity, { toValue: 1, duration: 520, easing: ease, useNativeDriver: true }),
         Animated.timing(footerTranslateY, { toValue: 0, duration: 520, easing: ease, useNativeDriver: true }),
       ]),
+      Animated.parallel([
+        Animated.timing(skipOpacity, { toValue: 1, duration: 520, easing: ease, useNativeDriver: true }),
+        Animated.timing(skipTranslateY, { toValue: 0, duration: 520, easing: ease, useNativeDriver: true }),
+      ]),
     ]).start();
   }, [
     logoOpacity,
@@ -139,6 +145,8 @@ const SignInScreen = () => {
     emailTranslateY,
     footerOpacity,
     footerTranslateY,
+    skipOpacity,
+    skipTranslateY,
   ]);
 
   return (
@@ -247,6 +255,25 @@ const SignInScreen = () => {
 
           <Text style={[styles.legalText, { fontSize: Math.max(13 * scale, 12) }]}>By continuing, you agree to our <Text style={styles.link} onPress={() => Linking.openURL('#')}>Terms of Service</Text> and <Text style={styles.link} onPress={() => Linking.openURL('#')}>Privacy Policy</Text></Text>
         </Animated.View>
+
+        <View style={[styles.buttonsContainer, { paddingHorizontal: isTablet ? 40 : 20, marginTop: 20 }]}>
+          <Animated.View style={{ 
+            opacity: skipOpacity, 
+            transform: [{ translateY: skipTranslateY }],
+            width: '100%'
+          }}>
+            <TouchableOpacity 
+              style={[styles.skipBtn, {
+                height: Math.max(56 * vScale, 52),
+                maxWidth: isTablet ? 450 : 400
+              }]}
+              onPress={() => navigation.navigate('Decisions')}
+              activeOpacity={0.9}
+            >
+              <Text style={[styles.skipBtnText, { fontSize: Math.max(16 * scale, 15) }]}>Skip for now</Text>
+            </TouchableOpacity>
+          </Animated.View>
+        </View>
 
         <View style={{ height: Math.max(40 * vScale, 30) }} />
       </ScrollView>
@@ -369,6 +396,27 @@ const styles = StyleSheet.create({
     color: '#FEB64D',
     textDecorationLine: 'none',
     fontWeight: '500',
+  },
+  skipBtn: {
+    width: '100%',
+    height: 56,
+    borderRadius: 28,
+    paddingHorizontal: 20,
+    backgroundColor: '#3DA5DC',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  skipBtnText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 16,
+    fontFamily: 'System',
   },
 });
 

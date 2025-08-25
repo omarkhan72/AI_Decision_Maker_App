@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, Switch } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, Switch, Animated, Easing } from 'react-native';
 import Slider from '@react-native-community/slider';
 
 const DescribeScreen = () => {
@@ -11,6 +11,28 @@ const DescribeScreen = () => {
   const [priority, setPriority] = useState('Medium');
   const [options, setOptions] = useState(['Job A', 'Job B']);
   const [newOption, setNewOption] = useState('');
+
+  // Animated values
+  const headerOpacity = useRef(new Animated.Value(0)).current;
+  const headerTranslateY = useRef(new Animated.Value(-30)).current;
+  const formOpacity = useRef(new Animated.Value(0)).current;
+  const formTranslateY = useRef(new Animated.Value(40)).current;
+  const titleInputOpacity = useRef(new Animated.Value(0)).current;
+  const titleInputTranslateX = useRef(new Animated.Value(-20)).current;
+  const descriptionOpacity = useRef(new Animated.Value(0)).current;
+  const descriptionTranslateX = useRef(new Animated.Value(20)).current;
+  const categoryOpacity = useRef(new Animated.Value(0)).current;
+  const categoryScale = useRef(new Animated.Value(0.95)).current;
+  const priorityOpacity = useRef(new Animated.Value(0)).current;
+  const priorityTranslateY = useRef(new Animated.Value(15)).current;
+  const optionsOpacity = useRef(new Animated.Value(0)).current;
+  const optionsScale = useRef(new Animated.Value(0.9)).current;
+  const factorsOpacity = useRef(new Animated.Value(0)).current;
+  const factorsTranslateX = useRef(new Animated.Value(-25)).current;
+  const sliderOpacity = useRef(new Animated.Value(0)).current;
+  const sliderTranslateY = useRef(new Animated.Value(20)).current;
+  const buttonsOpacity = useRef(new Animated.Value(0)).current;
+  const buttonsScale = useRef(new Animated.Value(0.85)).current;
     type ImportantFactors = {
     cost: boolean;
     time: boolean;
@@ -28,6 +50,52 @@ const DescribeScreen = () => {
   });
   const [outcomeImportance, setOutcomeImportance] = useState(50);
 
+  useEffect(() => {
+    const ease = Easing.bezier(0.22, 0.61, 0.36, 1);
+    Animated.stagger(100, [
+      Animated.parallel([
+        Animated.timing(headerOpacity, { toValue: 1, duration: 500, easing: ease, useNativeDriver: true }),
+        Animated.timing(headerTranslateY, { toValue: 0, duration: 500, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(formOpacity, { toValue: 1, duration: 600, easing: ease, useNativeDriver: true }),
+        Animated.timing(formTranslateY, { toValue: 0, duration: 600, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(titleInputOpacity, { toValue: 1, duration: 450, easing: ease, useNativeDriver: true }),
+        Animated.timing(titleInputTranslateX, { toValue: 0, duration: 450, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(descriptionOpacity, { toValue: 1, duration: 450, easing: ease, useNativeDriver: true }),
+        Animated.timing(descriptionTranslateX, { toValue: 0, duration: 450, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(categoryOpacity, { toValue: 1, duration: 500, easing: ease, useNativeDriver: true }),
+        Animated.spring(categoryScale, { toValue: 1, friction: 8, tension: 60, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(priorityOpacity, { toValue: 1, duration: 450, easing: ease, useNativeDriver: true }),
+        Animated.timing(priorityTranslateY, { toValue: 0, duration: 450, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(optionsOpacity, { toValue: 1, duration: 500, easing: ease, useNativeDriver: true }),
+        Animated.spring(optionsScale, { toValue: 1, friction: 7, tension: 50, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(factorsOpacity, { toValue: 1, duration: 450, easing: ease, useNativeDriver: true }),
+        Animated.timing(factorsTranslateX, { toValue: 0, duration: 450, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(sliderOpacity, { toValue: 1, duration: 400, easing: ease, useNativeDriver: true }),
+        Animated.timing(sliderTranslateY, { toValue: 0, duration: 400, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(buttonsOpacity, { toValue: 1, duration: 550, easing: ease, useNativeDriver: true }),
+        Animated.spring(buttonsScale, { toValue: 1, friction: 6, tension: 70, useNativeDriver: true }),
+      ]),
+    ]).start();
+  }, [headerOpacity, headerTranslateY, formOpacity, formTranslateY, titleInputOpacity, titleInputTranslateX, descriptionOpacity, descriptionTranslateX, categoryOpacity, categoryScale, priorityOpacity, priorityTranslateY, optionsOpacity, optionsScale, factorsOpacity, factorsTranslateX, sliderOpacity, sliderTranslateY, buttonsOpacity, buttonsScale]);
+
     const toggleFactor = (factor: keyof ImportantFactors) => {
     setImportantFactors(prev => ({ ...prev, [factor]: !prev[factor] }));
   };
@@ -38,121 +106,139 @@ const DescribeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      <Animated.View style={[styles.header, { opacity: headerOpacity, transform: [{ translateY: headerTranslateY }] }]}>
         <TouchableOpacity>
           <Text style={styles.backButton}>{'<'}</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Describe Your Decision</Text>
-      </View>
-      <ScrollView style={styles.formContainer}>
-        <Text style={styles.label}>Decision Title</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Title your decision in a few words..."
-          placeholderTextColor="#B0B0B0"
-          value={decisionTitle}
-          onChangeText={setDecisionTitle}
-        />
+      </Animated.View>
+      <Animated.ScrollView style={[styles.formContainer, { opacity: formOpacity, transform: [{ translateY: formTranslateY }] }]}>
+        <Animated.View style={{ opacity: titleInputOpacity, transform: [{ translateX: titleInputTranslateX }] }}>
+          <Text style={styles.label}>Decision Title</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Title your decision in a few words..."
+            placeholderTextColor="#B0B0B0"
+            value={decisionTitle}
+            onChangeText={setDecisionTitle}
+          />
+        </Animated.View>
 
-        <Text style={styles.label}>Detailed Description</Text>
-        <TextInput
-          style={[styles.input, styles.textArea]}
-          placeholder="Type your decision here..."
-          placeholderTextColor="#B0B0B0"
-          multiline
-          value={detailedDescription}
-          onChangeText={setDetailedDescription}
-        />
+        <Animated.View style={{ opacity: descriptionOpacity, transform: [{ translateX: descriptionTranslateX }] }}>
+          <Text style={styles.label}>Detailed Description</Text>
+          <TextInput
+            style={[styles.input, styles.textArea]}
+            placeholder="Type your decision here..."
+            placeholderTextColor="#B0B0B0"
+            multiline
+            value={detailedDescription}
+            onChangeText={setDetailedDescription}
+          />
+        </Animated.View>
 
-        <Text style={styles.label}>Category</Text>
-        <View style={styles.categoryContainer}>
-          {['Financial', 'Career', 'Personal'].map(item => (
-            <TouchableOpacity
-              key={item}
-              style={[styles.chip, category === item && styles.chipSelected]}
-              onPress={() => setCategory(item)}
-            >
-              <Text style={[styles.chipText, category === item && styles.chipTextSelected]}>{item}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        <Text style={styles.label}>Priority Level</Text>
-        <View style={styles.priorityContainer}>
-          {['Low', 'Medium', 'High'].map(level => (
-            <TouchableOpacity
-              key={level}
-              style={[styles.priorityButton, priority === level && styles.priorityButtonSelected]}
-              onPress={() => setPriority(level)}
-            >
-              <Text style={[styles.priorityButtonText, priority === level && styles.priorityButtonTextSelected]}>{level}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        <Text style={styles.label}>When do you need to decide?</Text>
-        <View style={styles.dateContainer}>
-          <TouchableOpacity style={styles.dateInput}>
-            <Text style={styles.dateText}>yyyy / mm / dd</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.dateInput}>
-            <Text style={styles.dateText}>yyyy / mm / dd</Text>
-          </TouchableOpacity>
-        </View>
-
-        <Text style={styles.label}>Possible Options</Text>
-        <View style={styles.optionsContainer}>
-          {options.map((option, index) => (
-            <View key={index} style={styles.optionChip}>
-              <Text style={styles.optionChipText}>{option}</Text>
-              <TouchableOpacity onPress={() => removeOption(index)}>
-                <Text style={styles.optionChipRemove}>x</Text>
+        <Animated.View style={{ opacity: categoryOpacity, transform: [{ scale: categoryScale }] }}>
+          <Text style={styles.label}>Category</Text>
+          <View style={styles.categoryContainer}>
+            {['Financial', 'Career', 'Personal'].map(item => (
+              <TouchableOpacity
+                key={item}
+                style={[styles.chip, category === item && styles.chipSelected]}
+                onPress={() => setCategory(item)}
+              >
+                <Text style={[styles.chipText, category === item && styles.chipTextSelected]}>{item}</Text>
               </TouchableOpacity>
-            </View>
-          ))}
-        </View>
-        <TouchableOpacity>
-          <Text style={styles.addOptionText}>+ Add Option</Text>
-        </TouchableOpacity>
+            ))}
+          </View>
+        </Animated.View>
 
-        <Text style={styles.label}>Important Factors</Text>
-        <View style={styles.factorsContainer}>
-                    {(Object.keys(importantFactors) as Array<keyof ImportantFactors>).map(factor => (
-            <View key={factor} style={styles.factorRow}>
-              <Switch
-                value={importantFactors[factor]}
-                onValueChange={() => toggleFactor(factor)}
-                trackColor={{ false: "#E0E0E0", true: "#34C759" }}
-                thumbColor={"#FFFFFF"}
-              />
-              <Text style={styles.factorText}>{factor.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</Text>
-            </View>
-          ))}
-        </View>
+        <Animated.View style={{ opacity: priorityOpacity, transform: [{ translateY: priorityTranslateY }] }}>
+          <Text style={styles.label}>Priority Level</Text>
+          <View style={styles.priorityContainer}>
+            {['Low', 'Medium', 'High'].map(level => (
+              <TouchableOpacity
+                key={level}
+                style={[styles.priorityButton, priority === level && styles.priorityButtonSelected]}
+                onPress={() => setPriority(level)}
+              >
+                <Text style={[styles.priorityButtonText, priority === level && styles.priorityButtonTextSelected]}>{level}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </Animated.View>
 
-        <Text style={styles.label}>How important is the outcome?</Text>
-        <Slider
-          style={styles.slider}
-          minimumValue={0}
-          maximumValue={100}
-          value={outcomeImportance}
-          onValueChange={setOutcomeImportance}
-          minimumTrackTintColor="#007AFF"
-          maximumTrackTintColor="#E0E0E0"
-          thumbTintColor="#FFB800"
-        />
-        <View style={styles.sliderLabels}>
-          <Text style={styles.sliderLabel}>Low</Text>
-          <Text style={styles.sliderLabel}>Critical</Text>
-        </View>
+        <Animated.View style={{ opacity: priorityOpacity, transform: [{ translateY: priorityTranslateY }] }}>
+          <Text style={styles.label}>When do you need to decide?</Text>
+          <View style={styles.dateContainer}>
+            <TouchableOpacity style={styles.dateInput}>
+              <Text style={styles.dateText}>yyyy / mm / dd</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.dateInput}>
+              <Text style={styles.dateText}>yyyy / mm / dd</Text>
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
 
-                <TouchableOpacity style={styles.analyzeButton} onPress={() => navigation.navigate('Analysis' as never)}>
-          <Text style={styles.analyzeButtonText}>Analyze with AI</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.clearButton}>
-          <Text style={styles.clearButtonText}>Clear Form</Text>
-        </TouchableOpacity>
-      </ScrollView>
+        <Animated.View style={{ opacity: optionsOpacity, transform: [{ scale: optionsScale }] }}>
+          <Text style={styles.label}>Possible Options</Text>
+          <View style={styles.optionsContainer}>
+            {options.map((option, index) => (
+              <View key={index} style={styles.optionChip}>
+                <Text style={styles.optionChipText}>{option}</Text>
+                <TouchableOpacity onPress={() => removeOption(index)}>
+                  <Text style={styles.optionChipRemove}>x</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+          <TouchableOpacity>
+            <Text style={styles.addOptionText}>+ Add Option</Text>
+          </TouchableOpacity>
+        </Animated.View>
+
+        <Animated.View style={{ opacity: factorsOpacity, transform: [{ translateX: factorsTranslateX }] }}>
+          <Text style={styles.label}>Important Factors</Text>
+          <View style={styles.factorsContainer}>
+                        {(Object.keys(importantFactors) as Array<keyof ImportantFactors>).map(factor => (
+              <View key={factor} style={styles.factorRow}>
+                <Switch
+                  value={importantFactors[factor]}
+                  onValueChange={() => toggleFactor(factor)}
+                  trackColor={{ false: "#E0E0E0", true: "#34C759" }}
+                  thumbColor={"#FFFFFF"}
+                />
+                <Text style={styles.factorText}>{factor.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</Text>
+              </View>
+            ))}
+          </View>
+        </Animated.View>
+
+        <Animated.View style={{ opacity: sliderOpacity, transform: [{ translateY: sliderTranslateY }] }}>
+          <Text style={styles.label}>How important is the outcome?</Text>
+          <Slider
+            style={styles.slider}
+            minimumValue={0}
+            maximumValue={100}
+            value={outcomeImportance}
+            onValueChange={setOutcomeImportance}
+            minimumTrackTintColor="#007AFF"
+            maximumTrackTintColor="#E0E0E0"
+            thumbTintColor="#FFB800"
+          />
+          <View style={styles.sliderLabels}>
+            <Text style={styles.sliderLabel}>Low</Text>
+            <Text style={styles.sliderLabel}>Critical</Text>
+          </View>
+        </Animated.View>
+
+        <Animated.View style={{ opacity: buttonsOpacity, transform: [{ scale: buttonsScale }] }}>
+          <TouchableOpacity style={styles.analyzeButton} onPress={() => navigation.navigate('Analysis' as never)}>
+            <Text style={styles.analyzeButtonText}>Analyze with AI</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.clearButton}>
+            <Text style={styles.clearButtonText}>Clear Form</Text>
+          </TouchableOpacity>
+        </Animated.View>
+      </Animated.ScrollView>
     </View>
   );
 };
