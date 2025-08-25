@@ -68,10 +68,14 @@ function GoogleG({ size = 22 }: { size?: number }) {
 const SignInScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { width, height } = useWindowDimensions();
-  const scale = Math.min(width / 375, 1);
-  const vScale = Math.min(height / 812, 1);
+  
+  // Improved responsive scaling
+  const isSmallScreen = width < 375;
+  const isTablet = width > 768;
+  const scale = isTablet ? Math.min(width / 768, 1.2) : Math.max(width / 375, 0.85);
+  const vScale = Math.max(height / 812, 0.8);
 
-  const logoSize = Math.min(132 * scale, 150);
+  const logoSize = isTablet ? Math.min(width * 0.15, 160) : Math.min(width * 0.35, isSmallScreen ? 120 : 150);
 
   const logoOpacity = useRef(new Animated.Value(0)).current;
   const logoScale = useRef(new Animated.Value(0.92)).current;
@@ -151,13 +155,13 @@ const SignInScreen = () => {
           <AppLogo size={logoSize} />
         </Animated.View>
 
-        <View style={styles.headerWrap}>
+        <View style={[styles.headerWrap, { paddingHorizontal: isTablet ? 40 : 0 }]}>
           <Animated.Text
             style={[
               styles.title,
               {
-                fontSize: 32 * scale,
-                lineHeight: 36 * scale,
+                fontSize: Math.max(28 * scale, 26),
+                lineHeight: Math.max(34 * scale, 32),
                 opacity: titleOpacity,
                 transform: [{ translateY: titleTranslateY }],
               },
@@ -169,8 +173,8 @@ const SignInScreen = () => {
             style={[
               styles.subtitle,
               {
-                fontSize: 17 * scale,
-                lineHeight: 22 * scale,
+                fontSize: Math.max(17 * scale, 16),
+                lineHeight: Math.max(22 * scale, 20),
                 opacity: subtitleOpacity,
                 transform: [{ translateY: subtitleTranslateY }],
               },
@@ -180,12 +184,23 @@ const SignInScreen = () => {
           </Animated.Text>
         </View>
 
-        <View style={styles.buttonsContainer}>
-          <Animated.View style={{ opacity: googleOpacity, transform: [{ translateY: googleTranslateY }] }}>
-            <TouchableOpacity activeOpacity={0.9} style={styles.googleBtn} onPress={() => navigation.navigate('Decisions')}> 
+        <View style={[styles.buttonsContainer, { paddingHorizontal: isTablet ? 40 : 20 }]}>
+          <Animated.View style={{ 
+            opacity: googleOpacity, 
+            transform: [{ translateY: googleTranslateY }],
+            width: '100%'
+          }}>
+            <TouchableOpacity 
+              activeOpacity={0.9} 
+              style={[styles.googleBtn, {
+                height: Math.max(56 * vScale, 52),
+                maxWidth: isTablet ? 450 : 400
+              }]} 
+              onPress={() => navigation.navigate('Decisions')}
+            > 
               <View style={styles.btnContent}>
-                <GoogleG size={22 * scale} />
-                <Text style={[styles.googleLabel, { fontSize: 16 * scale }]}>Continue with Google</Text>
+                <GoogleG size={Math.max(22 * scale, 20)} />
+                <Text style={[styles.googleLabel, { fontSize: Math.max(16 * scale, 15) }]}>Continue with Google</Text>
               </View>
             </TouchableOpacity>
           </Animated.View>
@@ -193,29 +208,47 @@ const SignInScreen = () => {
           <Animated.Text
             style={[
               styles.orText,
-              { fontSize: 15 * scale, opacity: orOpacity, transform: [{ translateY: orTranslateY }] },
+              { 
+                fontSize: Math.max(15 * scale, 14), 
+                opacity: orOpacity, 
+                transform: [{ translateY: orTranslateY }] 
+              },
             ]}
           >
             Or continue with email
           </Animated.Text>
 
-          <Animated.View style={{ opacity: emailOpacity, transform: [{ translateY: emailTranslateY }] }}>
-            <TouchableOpacity activeOpacity={0.9} style={styles.emailBtn}>
+          <Animated.View style={{ 
+            opacity: emailOpacity, 
+            transform: [{ translateY: emailTranslateY }],
+            width: '100%'
+          }}>
+            <TouchableOpacity 
+              activeOpacity={0.9} 
+              style={[styles.emailBtn, {
+                height: Math.max(56 * vScale, 52),
+                maxWidth: isTablet ? 450 : 400
+              }]}
+            >
               <View style={styles.btnContent}>
-                <Icon name="email-outline" size={22 * scale} color="#FFFFFF" />
-                <Text style={[styles.emailLabel, { fontSize: 16 * scale }]}>Sign in with Email</Text>
+                <Icon name="email-outline" size={Math.max(22 * scale, 20)} color="#FFFFFF" />
+                <Text style={[styles.emailLabel, { fontSize: Math.max(16 * scale, 15) }]}>Sign in with Email</Text>
               </View>
             </TouchableOpacity>
           </Animated.View>
         </View>
 
-        <Animated.View style={{ opacity: footerOpacity, transform: [{ translateY: footerTranslateY }] }}>
-          <Text style={[styles.signupText, { fontSize: 16 * scale }]}>Don't have an account? <Text onPress={() => {}} style={styles.signupLink}>Sign Up</Text></Text>
+        <Animated.View style={{ 
+          opacity: footerOpacity, 
+          transform: [{ translateY: footerTranslateY }],
+          paddingHorizontal: isTablet ? 60 : 20
+        }}>
+          <Text style={[styles.signupText, { fontSize: Math.max(16 * scale, 15) }]}>Don't have an account? <Text onPress={() => {}} style={styles.signupLink}>Sign Up</Text></Text>
 
-          <Text style={[styles.legalText, { fontSize: 13 * scale }]}>By continuing, you agree to our <Text style={styles.link} onPress={() => Linking.openURL('#')}>Terms of Service</Text> and <Text style={styles.link} onPress={() => Linking.openURL('#')}>Privacy Policy</Text></Text>
+          <Text style={[styles.legalText, { fontSize: Math.max(13 * scale, 12) }]}>By continuing, you agree to our <Text style={styles.link} onPress={() => Linking.openURL('#')}>Terms of Service</Text> and <Text style={styles.link} onPress={() => Linking.openURL('#')}>Privacy Policy</Text></Text>
         </Animated.View>
 
-        <SafeAreaView style={{ height: 16 }} />
+        <View style={{ height: Math.max(40 * vScale, 30) }} />
       </ScrollView>
     </LinearGradient>
   );
@@ -226,41 +259,52 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
+    flexGrow: 1,
     paddingTop: 60,
     paddingBottom: 32,
     alignItems: 'center',
     paddingHorizontal: 24,
+    justifyContent: 'center',
+    minHeight: '100%',
   },
   logoWrap: {
-    marginTop: 80,
-    marginBottom: 40,
+    marginTop: 60,
+    marginBottom: 32,
   },
   headerWrap: {
-    marginBottom: 40,
+    marginBottom: 48,
     alignItems: 'center',
+    maxWidth: 600,
   },
   buttonsContainer: {
     width: '100%',
     alignItems: 'center',
+    maxWidth: 500,
   },
   title: {
     color: '#FFFFFF',
-    fontWeight: '800',
+    fontWeight: '700',
+    textAlign: 'center',
+    fontFamily: 'System',
   },
   subtitle: {
-    color: 'rgba(255,255,255,0.72)',
+    color: 'rgba(255,255,255,0.75)',
     marginTop: 12,
+    textAlign: 'center',
+    fontWeight: '400',
+    fontFamily: 'System',
   },
   googleBtn: {
     width: '100%',
     height: 56,
     backgroundColor: '#FFFFFF',
     borderRadius: 28,
-    shadowColor: 'rgba(0,0,0,0.08)',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 1,
-    shadowRadius: 15,
-    elevation: 7,
+    alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
   },
   btnContent: {
     flexDirection: 'row',
@@ -270,50 +314,56 @@ const styles = StyleSheet.create({
   },
   googleLabel: {
     color: '#1A2B33',
-    fontWeight: '500',
+    fontWeight: '600',
     fontSize: 16,
     marginLeft: 12,
+    fontFamily: 'System',
   },
   orText: {
-    color: 'rgba(255,255,255,0.6)',
-    marginTop: 20,
-    marginBottom: 20,
+    color: 'rgba(255,255,255,0.65)',
+    marginTop: 24,
+    marginBottom: 24,
     fontSize: 14,
     textAlign: 'center',
-    fontWeight: '500',
+    fontWeight: '400',
+    fontFamily: 'System',
   },
   emailBtn: {
     width: '100%',
     height: 56,
     borderRadius: 28,
     backgroundColor: '#3DA5DC',
-    shadowColor: 'rgba(0,0,0,0.12)',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 1,
-    shadowRadius: 15,
-    elevation: 7,
+    alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 8,
   },
   emailLabel: {
     color: '#FFFFFF',
-    fontWeight: '500',
+    fontWeight: '600',
     fontSize: 16,
     marginLeft: 12,
+    fontFamily: 'System',
   },
   signupText: {
     color: 'rgba(255,255,255,0.8)',
-    marginTop: 40,
+    marginTop: 48,
     textAlign: 'center',
+    fontFamily: 'System',
   },
   signupLink: {
     color: '#FEB64D',
-    fontWeight: '700',
+    fontWeight: '600',
   },
   legalText: {
-    color: 'rgba(255,255,255,0.6)',
-    marginTop: 24,
+    color: 'rgba(255,255,255,0.65)',
+    marginTop: 28,
     textAlign: 'center',
-    paddingHorizontal: 32,
+    paddingHorizontal: 20,
     lineHeight: 20,
+    fontFamily: 'System',
   },
   link: {
     color: '#FEB64D',

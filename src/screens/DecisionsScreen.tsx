@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TextInput, ScrollView, TouchableOpacity, Image, FlatList, StatusBar } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, TextInput, ScrollView, TouchableOpacity, Image, FlatList, StatusBar, Animated, Easing } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -70,11 +70,49 @@ const DecisionCard: React.FC<DecisionCardProps> = ({ title, description, timesta
 );
 
 const DecisionsScreen = ({ navigation }: { navigation: any }) => {
+  // Animated values
+  const headerOpacity = useRef(new Animated.Value(0)).current;
+  const headerTranslateY = useRef(new Animated.Value(-20)).current;
+  const searchOpacity = useRef(new Animated.Value(0)).current;
+  const searchTranslateY = useRef(new Animated.Value(20)).current;
+  const filtersOpacity = useRef(new Animated.Value(0)).current;
+  const filtersTranslateX = useRef(new Animated.Value(-30)).current;
+  const cardsOpacity = useRef(new Animated.Value(0)).current;
+  const cardsScale = useRef(new Animated.Value(0.95)).current;
+  const fabOpacity = useRef(new Animated.Value(0)).current;
+  const fabScale = useRef(new Animated.Value(0.8)).current;
+
+  useEffect(() => {
+    const ease = Easing.bezier(0.22, 0.61, 0.36, 1);
+    Animated.stagger(120, [
+      Animated.parallel([
+        Animated.timing(headerOpacity, { toValue: 1, duration: 600, easing: ease, useNativeDriver: true }),
+        Animated.timing(headerTranslateY, { toValue: 0, duration: 600, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(searchOpacity, { toValue: 1, duration: 550, easing: ease, useNativeDriver: true }),
+        Animated.timing(searchTranslateY, { toValue: 0, duration: 550, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(filtersOpacity, { toValue: 1, duration: 500, easing: ease, useNativeDriver: true }),
+        Animated.timing(filtersTranslateX, { toValue: 0, duration: 500, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(cardsOpacity, { toValue: 1, duration: 650, easing: ease, useNativeDriver: true }),
+        Animated.spring(cardsScale, { toValue: 1, friction: 7, tension: 50, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(fabOpacity, { toValue: 1, duration: 400, easing: ease, useNativeDriver: true }),
+        Animated.spring(fabScale, { toValue: 1, friction: 6, tension: 60, useNativeDriver: true }),
+      ]),
+    ]).start();
+  }, [headerOpacity, headerTranslateY, searchOpacity, searchTranslateY, filtersOpacity, filtersTranslateX, cardsOpacity, cardsScale, fabOpacity, fabScale]);
+
   return (
     <LinearGradient colors={['#1D3A4E', '#4A8A9E']} style={styles.flexOne}>
         <SafeAreaView style={styles.flexOne}>
             <StatusBar barStyle="light-content" />
-            <View style={styles.header}>
+            <Animated.View style={[styles.header, { opacity: headerOpacity, transform: [{ translateY: headerTranslateY }] }]}>
                 <View style={styles.headerTitleContainer}>
                     <Icon name="lightbulb-on-outline" size={28} color="#66C8F2" />
                     <Text style={styles.headerTitle}>Decisions</Text>
@@ -83,18 +121,18 @@ const DecisionsScreen = ({ navigation }: { navigation: any }) => {
                     <Image source={{ uri: 'https://i.pravatar.cc/150?u=a042581f4e29026704d' }} style={styles.profileImage} />
                     <View style={styles.notificationBadge} />
                 </TouchableOpacity>
-            </View>
+            </Animated.View>
 
-            <View style={styles.searchContainer}>
+            <Animated.View style={[styles.searchContainer, { opacity: searchOpacity, transform: [{ translateY: searchTranslateY }] }]}>
                 <Icon name="magnify" size={22} color="#8E8E93" style={styles.searchIcon} />
                 <TextInput
                     placeholder="Search decisions..."
                     placeholderTextColor="#8E8E93"
                     style={styles.searchInput}
                 />
-            </View>
+            </Animated.View>
 
-            <View style={styles.filtersContainer}>
+            <Animated.View style={[styles.filtersContainer, { opacity: filtersOpacity, transform: [{ translateX: filtersTranslateX }] }]}>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     <FilterChip label="All" active />
                     <FilterChip label="Career" />
@@ -102,19 +140,23 @@ const DecisionsScreen = ({ navigation }: { navigation: any }) => {
                     <FilterChip label="Personal" />
                     <FilterChip label="Health" />
                 </ScrollView>
-            </View>
+            </Animated.View>
 
-            <FlatList
-                data={decisionData}
-                renderItem={({ item }) => <DecisionCard {...item} />}
-                keyExtractor={item => item.id}
-                contentContainerStyle={styles.listContainer}
-                showsVerticalScrollIndicator={false}
-            />
+            <Animated.View style={{ opacity: cardsOpacity, transform: [{ scale: cardsScale }], flex: 1 }}>
+                <FlatList
+                    data={decisionData}
+                    renderItem={({ item }) => <DecisionCard {...item} />}
+                    keyExtractor={item => item.id}
+                    contentContainerStyle={styles.listContainer}
+                    showsVerticalScrollIndicator={false}
+                />
+            </Animated.View>
 
-            <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('DescribeScreen')}>
-                <Icon name="plus" size={28} color="#FFFFFF" />
-            </TouchableOpacity>
+            <Animated.View style={{ opacity: fabOpacity, transform: [{ scale: fabScale }] }}>
+                <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('DescribeScreen')}>
+                    <Icon name="plus" size={28} color="#FFFFFF" />
+                </TouchableOpacity>
+            </Animated.View>
         </SafeAreaView>
     </LinearGradient>
   );

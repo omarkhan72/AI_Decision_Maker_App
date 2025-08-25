@@ -79,10 +79,15 @@ function HeroIllustration({ size }: { size: number }) {
 function ConfidenceIntroScreen() {
   const navigation = useNavigation();
   const { width, height } = useWindowDimensions();
-  const scale = Math.min(width / 375, 1);
-  const vScale = Math.min(height / 812, 1);
-
-  const heroSize = Math.min(width * 0.55, 260);
+  
+  // Improved responsive scaling
+  const isSmallScreen = width < 375;
+  const isTablet = width > 768;
+  const scale = isTablet ? Math.min(width / 768, 1.2) : Math.max(width / 375, 0.85);
+  const vScale = Math.max(height / 812, 0.8);
+  
+  // Better hero size calculation for all screen sizes
+  const heroSize = isTablet ? Math.min(width * 0.35, 300) : Math.min(width * 0.6, isSmallScreen ? 200 : 260);
 
   // Animated values
   const titleOpacity = useRef(new Animated.Value(0)).current;
@@ -131,19 +136,38 @@ function ConfidenceIntroScreen() {
           <HeroIllustration size={heroSize} />
         </Animated.View>
 
-        <View style={styles.textWrap}>
-          <Animated.Text style={[styles.title, { fontSize: 36 * scale, lineHeight: 44 * scale, opacity: titleOpacity, transform: [{ translateY: titleTranslateY }] }]}> 
+        <View style={[styles.textWrap, { paddingHorizontal: isTablet ? 48 : 24 }]}>
+          <Animated.Text style={[styles.title, { 
+            fontSize: Math.max(28 * scale, 24), 
+            lineHeight: Math.max(36 * scale, 30), 
+            opacity: titleOpacity, 
+            transform: [{ translateY: titleTranslateY }] 
+          }]}> 
             {"Move forward with\nclarity & confidence"}
           </Animated.Text>
-          <Animated.Text style={[styles.subtitle, { fontSize: 17 * scale, lineHeight: 24 * scale, opacity: subtitleOpacity, transform: [{ translateY: subtitleTranslateY }] }]}> 
+          <Animated.Text style={[styles.subtitle, { 
+            fontSize: Math.max(16 * scale, 14), 
+            lineHeight: Math.max(22 * scale, 20), 
+            opacity: subtitleOpacity, 
+            transform: [{ translateY: subtitleTranslateY }] 
+          }]}> 
             {"Your next decision, powered by AI\ninsight"}
           </Animated.Text>
         </View>
 
-        <Animated.View style={{ opacity: ctaOpacity, transform: [{ translateY: ctaTranslateY }, { scale: ctaScale }] }}>
+        <Animated.View style={{ 
+          opacity: ctaOpacity, 
+          transform: [{ translateY: ctaTranslateY }, { scale: ctaScale }],
+          width: '100%',
+          paddingHorizontal: 20
+        }}>
           <TouchableOpacity
             activeOpacity={0.9}
-            style={[styles.ctaButton, { paddingVertical: 0 }]}
+            style={[styles.ctaButton, { 
+              paddingVertical: 0,
+              width: '100%',
+              maxWidth: isTablet ? 500 : 400
+            }]}
             onPressIn={() => Animated.spring(ctaScale, { toValue: 0.98, useNativeDriver: true, friction: 7, tension: 80 }).start()}
             onPressOut={() => Animated.spring(ctaScale, { toValue: 1, useNativeDriver: true, friction: 7, tension: 80 }).start()}
             onPress={() => navigation.navigate('SignIn' as never)}
@@ -152,15 +176,18 @@ function ConfidenceIntroScreen() {
               colors={["#63C6F1", "#3DA5DC"]}
               start={{ x: 0.5, y: 0 }}
               end={{ x: 0.5, y: 1 }}
-              style={[styles.ctaGradient, { paddingVertical: 16 * vScale }]}
+              style={[styles.ctaGradient, { 
+                paddingVertical: Math.max(18 * vScale, 16),
+                paddingHorizontal: isTablet ? 50 : 40
+              }]}
             >
-              <Text style={[styles.ctaLabel, { fontSize: 18 * scale }]}>Let's Go</Text>
+              <Text style={[styles.ctaLabel, { fontSize: Math.max(18 * scale, 17) }]}>Let's Go</Text>
             </LinearGradient>
           </TouchableOpacity>
         </Animated.View>
 
-        {/* Bottom spacer to visually match the safe-area home indicator gap */}
-        <SafeAreaView style={{ height: 16 }} />
+        {/* Bottom spacer to fill extra vertical space */}
+        <View style={{ height: Math.max(60 * vScale, 40) }} />
       </ScrollView>
     </LinearGradient>
   );
@@ -171,60 +198,61 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
+    flexGrow: 1,
     paddingTop: 36,
     paddingBottom: 40,
     alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '100%',
   },
   heroWrap: {
     marginTop: 48,
+    marginBottom: 24,
   },
   textWrap: {
     marginTop: 24,
+    marginBottom: 16,
     paddingHorizontal: 24,
     alignSelf: 'stretch',
     alignItems: 'center',
+    maxWidth: 600,
   },
   title: {
     color: '#FFFFFF',
     textAlign: 'center',
-    fontWeight: '800',
+    fontWeight: '700',
+    fontFamily: 'System',
   },
   subtitle: {
-    color: 'rgba(255,255,255,0.72)',
-    marginTop: 12,
+    color: 'rgba(255,255,255,0.75)',
+    marginTop: 16,
     textAlign: 'center',
+    fontWeight: '400',
+    fontFamily: 'System',
   },
-
-
   ctaButton: {
-    marginTop: 34,
-    width: '80%',
+    marginTop: 50,
     alignSelf: 'center',
-    borderRadius: 36,   // pill-shape
-    overflow: 'hidden', // clip gradient corners
+    borderRadius: 28,
+    overflow: 'hidden',
     shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 6,
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 8,
   },
   ctaGradient: {
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 36,
-    paddingHorizontal: 28,
+    borderRadius: 28,
+    paddingHorizontal: 32,
   },
-  
-  
-  
-  
   ctaLabel: {
     color: '#FFFFFF',
-    fontWeight: '800',
-    letterSpacing: 0.2,
+    fontWeight: '600',
+    letterSpacing: 0.3,
+    fontFamily: 'System',
   },
-  
-
 });
 
 export default ConfidenceIntroScreen;
