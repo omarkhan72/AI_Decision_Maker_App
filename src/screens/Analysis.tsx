@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated, Easing } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -63,52 +63,130 @@ const InfoCard: React.FC<InfoCardProps> = ({ title, items, icon, iconColor, icon
 
 const AnalysisScreen = () => {
   const navigation = useNavigation();
+  
+  // Animation values
+  const headerOpacity = useRef(new Animated.Value(0)).current;
+  const headerTranslateY = useRef(new Animated.Value(-20)).current;
+  const prosOpacity = useRef(new Animated.Value(0)).current;
+  const prosScale = useRef(new Animated.Value(0.95)).current;
+  const consOpacity = useRef(new Animated.Value(0)).current;
+  const consScale = useRef(new Animated.Value(0.95)).current;
+  const outcomesOpacity = useRef(new Animated.Value(0)).current;
+  const outcomesScale = useRef(new Animated.Value(0.95)).current;
+  const alternativesOpacity = useRef(new Animated.Value(0)).current;
+  const alternativesScale = useRef(new Animated.Value(0.95)).current;
+  const questionsOpacity = useRef(new Animated.Value(0)).current;
+  const questionsScale = useRef(new Animated.Value(0.95)).current;
+  const pdfOpacity = useRef(new Animated.Value(0)).current;
+  const pdfScale = useRef(new Animated.Value(0.85)).current;
+
+  useEffect(() => {
+    const ease = Easing.bezier(0.22, 0.61, 0.36, 1);
+    Animated.stagger(120, [
+      Animated.parallel([
+        Animated.timing(headerOpacity, { toValue: 1, duration: 600, easing: ease, useNativeDriver: true }),
+        Animated.timing(headerTranslateY, { toValue: 0, duration: 600, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(prosOpacity, { toValue: 1, duration: 650, easing: ease, useNativeDriver: true }),
+        Animated.timing(prosScale, { toValue: 1, duration: 650, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(consOpacity, { toValue: 1, duration: 650, easing: ease, useNativeDriver: true }),
+        Animated.timing(consScale, { toValue: 1, duration: 650, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(outcomesOpacity, { toValue: 1, duration: 650, easing: ease, useNativeDriver: true }),
+        Animated.timing(outcomesScale, { toValue: 1, duration: 650, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(alternativesOpacity, { toValue: 1, duration: 650, easing: ease, useNativeDriver: true }),
+        Animated.timing(alternativesScale, { toValue: 1, duration: 650, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(questionsOpacity, { toValue: 1, duration: 650, easing: ease, useNativeDriver: true }),
+        Animated.timing(questionsScale, { toValue: 1, duration: 650, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(pdfOpacity, { toValue: 1, duration: 400, easing: ease, useNativeDriver: true }),
+        Animated.spring(pdfScale, { toValue: 1, friction: 7, tension: 50, useNativeDriver: true }),
+      ]),
+    ]).start();
+  }, [
+    headerOpacity,
+    headerTranslateY,
+    prosOpacity,
+    prosScale,
+    consOpacity,
+    consScale,
+    outcomesOpacity,
+    outcomesScale,
+    alternativesOpacity,
+    alternativesScale,
+    questionsOpacity,
+    questionsScale,
+    pdfOpacity,
+    pdfScale,
+  ]);
+
   return (
     <LinearGradient colors={['#1D3A4E', '#4A8A9E']} style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.headerTitle}>Your Decision Analysis</Text>
+      <Animated.ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Animated.Text style={[styles.headerTitle, { opacity: headerOpacity, transform: [{ translateY: headerTranslateY }] }]}>Your Decision Analysis</Animated.Text>
 
-        <InfoCard
-          title="PROS"
-          items={analysisData.pros}
-          icon="check"
-          iconColor="#FFFFFF"
-          iconBgColor="#34C759"
-        />
-        <InfoCard
-          title="CONS"
-          items={analysisData.cons}
-          icon="minus"
-          iconColor="#FFFFFF"
-          iconBgColor="#FF3B30"
-        />
-        <InfoCard
-          title="POTENTIAL OUTCOMES"
-          items={analysisData.outcomes}
-          icon="arrow-right"
-          iconColor="#FFFFFF"
-          iconBgColor="#007AFF"
-        />
-        <InfoCard
-          title="ALTERNATIVES"
-          items={analysisData.alternatives}
-          icon="swap-horizontal"
-          iconColor="#FFFFFF"
-          iconBgColor="#5856D6"
-        />
-                <TouchableOpacity onPress={() => navigation.navigate('Assistant' as never)}>
+        <Animated.View style={{ opacity: prosOpacity, transform: [{ scale: prosScale }] }}>
           <InfoCard
-            title="KEY QUESTIONS"
-            items={analysisData.questions}
-            numbered
+            title="PROS"
+            items={analysisData.pros}
+            icon="check"
+            iconColor="#FFFFFF"
+            iconBgColor="#34C759"
           />
-        </TouchableOpacity>
+        </Animated.View>
+        <Animated.View style={{ opacity: consOpacity, transform: [{ scale: consScale }] }}>
+          <InfoCard
+            title="CONS"
+            items={analysisData.cons}
+            icon="minus"
+            iconColor="#FFFFFF"
+            iconBgColor="#FF3B30"
+          />
+        </Animated.View>
+        <Animated.View style={{ opacity: outcomesOpacity, transform: [{ scale: outcomesScale }] }}>
+          <InfoCard
+            title="POTENTIAL OUTCOMES"
+            items={analysisData.outcomes}
+            icon="arrow-right"
+            iconColor="#FFFFFF"
+            iconBgColor="#007AFF"
+          />
+        </Animated.View>
+        <Animated.View style={{ opacity: alternativesOpacity, transform: [{ scale: alternativesScale }] }}>
+          <InfoCard
+            title="ALTERNATIVES"
+            items={analysisData.alternatives}
+            icon="swap-horizontal"
+            iconColor="#FFFFFF"
+            iconBgColor="#5856D6"
+          />
+        </Animated.View>
+        <Animated.View style={{ opacity: questionsOpacity, transform: [{ scale: questionsScale }] }}>
+          <TouchableOpacity onPress={() => navigation.navigate('Assistant' as never)}>
+            <InfoCard
+              title="KEY QUESTIONS"
+              items={analysisData.questions}
+              numbered
+            />
+          </TouchableOpacity>
+        </Animated.View>
 
-        <TouchableOpacity style={styles.pdfButton}>
-          <Icon name="file-pdf-box" size={24} color="#FFFFFF" />
-          <Text style={styles.pdfButtonText}>Save as PDF</Text>
-        </TouchableOpacity>
-      </ScrollView>
+        <Animated.View style={{ opacity: pdfOpacity, transform: [{ scale: pdfScale }] }}>
+          <TouchableOpacity style={styles.pdfButton}>
+            <Icon name="file-pdf-box" size={24} color="#FFFFFF" />
+            <Text style={styles.pdfButtonText}>Save as PDF</Text>
+          </TouchableOpacity>
+        </Animated.View>
+      </Animated.ScrollView>
     </LinearGradient>
   );
 };

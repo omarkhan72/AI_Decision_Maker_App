@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Switch } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Switch, Animated, Easing } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -26,59 +26,134 @@ const SettingItem: React.FC<SettingItemProps> = ({ icon, title, subtitle, onPres
 
 const SettingScreen = () => {
   const [isDarkMode, setIsDarkMode] = useState(true);
+  
+  // Animation values
+  const headerOpacity = useRef(new Animated.Value(0)).current;
+  const headerTranslateY = useRef(new Animated.Value(-30)).current;
+  const accountOpacity = useRef(new Animated.Value(0)).current;
+  const accountTranslateX = useRef(new Animated.Value(-20)).current;
+  const subscriptionOpacity = useRef(new Animated.Value(0)).current;
+  const subscriptionTranslateX = useRef(new Animated.Value(20)).current;
+  const languageOpacity = useRef(new Animated.Value(0)).current;
+  const languageScale = useRef(new Animated.Value(0.95)).current;
+  const themeOpacity = useRef(new Animated.Value(0)).current;
+  const themeScale = useRef(new Animated.Value(0.95)).current;
+  const privacyOpacity = useRef(new Animated.Value(0)).current;
+  const privacyTranslateX = useRef(new Animated.Value(-20)).current;
+  const footerOpacity = useRef(new Animated.Value(0)).current;
+  const footerTranslateY = useRef(new Animated.Value(20)).current;
+
+  useEffect(() => {
+    const ease = Easing.bezier(0.22, 0.61, 0.36, 1);
+    Animated.stagger(100, [
+      Animated.parallel([
+        Animated.timing(headerOpacity, { toValue: 1, duration: 500, easing: ease, useNativeDriver: true }),
+        Animated.timing(headerTranslateY, { toValue: 0, duration: 500, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(accountOpacity, { toValue: 1, duration: 450, easing: ease, useNativeDriver: true }),
+        Animated.timing(accountTranslateX, { toValue: 0, duration: 450, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(subscriptionOpacity, { toValue: 1, duration: 450, easing: ease, useNativeDriver: true }),
+        Animated.timing(subscriptionTranslateX, { toValue: 0, duration: 450, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(languageOpacity, { toValue: 1, duration: 500, easing: ease, useNativeDriver: true }),
+        Animated.timing(languageScale, { toValue: 1, duration: 500, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(themeOpacity, { toValue: 1, duration: 500, easing: ease, useNativeDriver: true }),
+        Animated.timing(themeScale, { toValue: 1, duration: 500, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(privacyOpacity, { toValue: 1, duration: 450, easing: ease, useNativeDriver: true }),
+        Animated.timing(privacyTranslateX, { toValue: 0, duration: 450, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(footerOpacity, { toValue: 1, duration: 400, easing: ease, useNativeDriver: true }),
+        Animated.timing(footerTranslateY, { toValue: 0, duration: 400, easing: ease, useNativeDriver: true }),
+      ]),
+    ]).start();
+  }, [
+    headerOpacity,
+    headerTranslateY,
+    accountOpacity,
+    accountTranslateX,
+    subscriptionOpacity,
+    subscriptionTranslateX,
+    languageOpacity,
+    languageScale,
+    themeOpacity,
+    themeScale,
+    privacyOpacity,
+    privacyTranslateX,
+    footerOpacity,
+    footerTranslateY,
+  ]);
 
   return (
     <LinearGradient colors={['#1D3A4E', '#4A8A9E']} style={styles.container}>
-      <View style={styles.header}>
+      <Animated.View style={[styles.header, { opacity: headerOpacity, transform: [{ translateY: headerTranslateY }] }]}>
         <TouchableOpacity>
           <Icon name="chevron-left" size={30} color="#FFFFFF" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Settings</Text>
         <View style={{ width: 30 }} />
-      </View>
+      </Animated.View>
 
       <View style={styles.settingsList}>
-        <SettingItem
-          icon="account-outline"
-          title="Account"
-          subtitle="Manage your personal details and login info"
-          rightContent={<Icon name="chevron-right" size={24} color="#FFFFFF" />}
-        />
-        <SettingItem
-          icon="crown-outline"
-          title="Subscription"
-          subtitle="View and upgrade your plan"
-          rightContent={<Icon name="chevron-right" size={24} color="#FFFFFF" />}
-        />
-        <SettingItem
-          icon="translate"
-          title="Language"
-          subtitle="Choose your preferred language"
-          rightContent={
-            <View style={styles.languageContainer}>
-              <Text style={styles.languageText}>English</Text>
-              <Icon name="chevron-right" size={24} color="#FFFFFF" />
-            </View>
-          }
-        />
-        <SettingItem
-          icon="moon-waning-crescent"
-          title="Theme"
-          subtitle="Switch between light and dark mode"
-          rightContent={<Switch value={isDarkMode} onValueChange={setIsDarkMode} trackColor={{ false: '#767577', true: '#81b0ff' }} thumbColor={isDarkMode ? '#f5dd4b' : '#f4f3f4'} />}
-        />
-        <SettingItem
-          icon="shield-check-outline"
-          title="Privacy & Terms"
-          subtitle="View our privacy policy and terms"
-          rightContent={<Icon name="chevron-right" size={24} color="#FFFFFF" />}
-        />
+        <Animated.View style={{ opacity: accountOpacity, transform: [{ translateX: accountTranslateX }] }}>
+          <SettingItem
+            icon="account-outline"
+            title="Account"
+            subtitle="Manage your personal details and login info"
+            rightContent={<Icon name="chevron-right" size={24} color="#FFFFFF" />}
+          />
+        </Animated.View>
+        <Animated.View style={{ opacity: subscriptionOpacity, transform: [{ translateX: subscriptionTranslateX }] }}>
+          <SettingItem
+            icon="crown-outline"
+            title="Subscription"
+            subtitle="View and upgrade your plan"
+            rightContent={<Icon name="chevron-right" size={24} color="#FFFFFF" />}
+          />
+        </Animated.View>
+        <Animated.View style={{ opacity: languageOpacity, transform: [{ scale: languageScale }] }}>
+          <SettingItem
+            icon="translate"
+            title="Language"
+            subtitle="Choose your preferred language"
+            rightContent={
+              <View style={styles.languageContainer}>
+                <Text style={styles.languageText}>English</Text>
+                <Icon name="chevron-right" size={24} color="#FFFFFF" />
+              </View>
+            }
+          />
+        </Animated.View>
+        <Animated.View style={{ opacity: themeOpacity, transform: [{ scale: themeScale }] }}>
+          <SettingItem
+            icon="moon-waning-crescent"
+            title="Theme"
+            subtitle="Switch between light and dark mode"
+            rightContent={<Switch value={isDarkMode} onValueChange={setIsDarkMode} trackColor={{ false: '#767577', true: '#81b0ff' }} thumbColor={isDarkMode ? '#f5dd4b' : '#f4f3f4'} />}
+          />
+        </Animated.View>
+        <Animated.View style={{ opacity: privacyOpacity, transform: [{ translateX: privacyTranslateX }] }}>
+          <SettingItem
+            icon="shield-check-outline"
+            title="Privacy & Terms"
+            subtitle="View our privacy policy and terms"
+            rightContent={<Icon name="chevron-right" size={24} color="#FFFFFF" />}
+          />
+        </Animated.View>
       </View>
 
-      <View style={styles.footer}>
+      <Animated.View style={[styles.footer, { opacity: footerOpacity, transform: [{ translateY: footerTranslateY }] }]}>
         <Text style={styles.footerText}>AI Life Decision Mapper © 2025</Text>
-        <View style={styles.dragIndicator} />
-      </View>
+
+      </Animated.View>
     </LinearGradient>
   );
 };
@@ -150,12 +225,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 20,
   },
-  dragIndicator: {
-    width: 120,
-    height: 5,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    borderRadius: 2.5,
-  },
+
 });
 
 export default SettingScreen;
