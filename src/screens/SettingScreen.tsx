@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { View, Text, StyleSheet, TouchableOpacity, Switch, Animated, Easing } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient';
+import BottomSheet, { BottomSheetRef } from '../components/BottomSheet';
 
 interface SettingItemProps {
   icon: string;
@@ -25,7 +27,10 @@ const SettingItem: React.FC<SettingItemProps> = ({ icon, title, subtitle, onPres
 );
 
 const SettingScreen = () => {
+  const navigation = useNavigation();
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const bottomSheetRef = useRef<BottomSheetRef>(null);
+  const [showBottomSheet, setShowBottomSheet] = useState(false);
   
   // Animation values
   const headerOpacity = useRef(new Animated.Value(0)).current;
@@ -95,7 +100,7 @@ const SettingScreen = () => {
   return (
     <LinearGradient colors={['#1D3A4E', '#4A8A9E']} style={styles.container}>
       <Animated.View style={[styles.header, { opacity: headerOpacity, transform: [{ translateY: headerTranslateY }] }]}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Icon name="chevron-left" size={30} color="#FFFFFF" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Settings</Text>
@@ -116,6 +121,13 @@ const SettingScreen = () => {
             icon="crown-outline"
             title="Subscription"
             subtitle="View and upgrade your plan"
+            onPress={() => {
+              console.log('Subscription pressed');
+              setShowBottomSheet(true);
+              setTimeout(() => {
+                bottomSheetRef.current?.open();
+              }, 100);
+            }}
             rightContent={<Icon name="chevron-right" size={24} color="#FFFFFF" />}
           />
         </Animated.View>
@@ -152,8 +164,14 @@ const SettingScreen = () => {
 
       <Animated.View style={[styles.footer, { opacity: footerOpacity, transform: [{ translateY: footerTranslateY }] }]}>
         <Text style={styles.footerText}>AI Life Decision Mapper © 2025</Text>
-
       </Animated.View>
+
+      {showBottomSheet && (
+        <BottomSheet
+          ref={bottomSheetRef}
+          onClose={() => setShowBottomSheet(false)}
+        />
+      )}
     </LinearGradient>
   );
 };

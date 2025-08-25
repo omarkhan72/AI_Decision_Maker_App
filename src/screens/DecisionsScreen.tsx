@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TextInput, ScrollView, TouchableOpacity, Image, FlatList, StatusBar, Animated, Easing } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const decisionData = [
+const initialDecisionData = [
   {
     id: '1',
     title: 'Career Path Decision',
@@ -42,12 +42,16 @@ const FilterChip: React.FC<FilterChipProps> = ({ label, active }) => (
 );
 
 interface DecisionCardProps {
+  id: string;
   title: string;
   description: string;
   timestamp: string;
+  onEdit: (id: string) => void;
+  onView: (id: string) => void;
+  onDelete: (id: string) => void;
 }
 
-const DecisionCard: React.FC<DecisionCardProps> = ({ title, description, timestamp }) => (
+const DecisionCard: React.FC<DecisionCardProps> = ({ id, title, description, timestamp, onEdit, onView, onDelete }) => (
   <View style={styles.card}>
     <View style={styles.cardHeader}>
         <Text style={styles.cardTitle}>{title}</Text>
@@ -56,13 +60,13 @@ const DecisionCard: React.FC<DecisionCardProps> = ({ title, description, timesta
     <Text style={styles.cardDescription}>{description}</Text>
     <View style={styles.cardDivider} />
     <View style={styles.cardActions}>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => onEdit(id)} style={styles.actionButton}>
         <Icon name="pencil-outline" size={24} color="#5B6E79" />
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => onView(id)} style={styles.actionButton}>
         <Icon name="eye-outline" size={24} color="#5B6E79" />
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => onDelete(id)} style={styles.actionButton}>
         <Icon name="trash-can-outline" size={24} color="#5B6E79" />
       </TouchableOpacity>
     </View>
@@ -70,6 +74,29 @@ const DecisionCard: React.FC<DecisionCardProps> = ({ title, description, timesta
 );
 
 const DecisionsScreen = ({ navigation }: { navigation: any }) => {
+  const [decisions, setDecisions] = useState(initialDecisionData);
+
+  // Handler functions for card actions
+  const handleEdit = (id: string) => {
+    const decision = decisions.find(d => d.id === id);
+    if (decision) {
+      // Navigate to edit screen with decision data
+      navigation.navigate('DescribeScreen', { editMode: true, decisionData: decision });
+    }
+  };
+
+  const handleView = (id: string) => {
+    const decision = decisions.find(d => d.id === id);
+    if (decision) {
+      // Navigate to analysis screen to view the decision
+      navigation.navigate('Analysis', { decisionId: id, decisionData: decision });
+    }
+  };
+
+  const handleDelete = (id: string) => {
+    // Remove decision from the list
+    setDecisions(prevDecisions => prevDecisions.filter(d => d.id !== id));
+  };
   // Animated values
   const headerOpacity = useRef(new Animated.Value(0)).current;
   const headerTranslateY = useRef(new Animated.Value(-20)).current;
@@ -144,8 +171,15 @@ const DecisionsScreen = ({ navigation }: { navigation: any }) => {
 
             <Animated.View style={{ opacity: cardsOpacity, transform: [{ scale: cardsScale }], flex: 1 }}>
                 <FlatList
-                    data={decisionData}
-                    renderItem={({ item }) => <DecisionCard {...item} />}
+                    data={decisions}
+                    renderItem={({ item }) => (
+                      <DecisionCard
+                        {...item}
+                        onEdit={handleEdit}
+                        onView={handleView}
+                        onDelete={handleDelete}
+                      />
+                    )}
                     keyExtractor={item => item.id}
                     contentContainerStyle={styles.listContainer}
                     showsVerticalScrollIndicator={false}
@@ -303,6 +337,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 8,
+  },
+  actionButton: {
+    padding: 8,
+    borderRadius: 8,
   },
 });
 

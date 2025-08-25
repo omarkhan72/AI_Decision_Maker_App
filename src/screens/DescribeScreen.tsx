@@ -107,7 +107,7 @@ const DescribeScreen = () => {
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.header, { opacity: headerOpacity, transform: [{ translateY: headerTranslateY }] }]}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={styles.backButton}>{'<'}</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Describe Your Decision</Text>

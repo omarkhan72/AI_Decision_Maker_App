@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Animated, Easing, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient';
@@ -41,6 +42,7 @@ const MessageBubble = ({ message }: { message: Message }) => (
 );
 
 const AssistantScreen = () => {
+  const navigation = useNavigation();
   // Animation values
   const headerOpacity = useRef(new Animated.Value(0)).current;
   const headerTranslateY = useRef(new Animated.Value(-30)).current;
@@ -94,7 +96,7 @@ const AssistantScreen = () => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <LinearGradient colors={['#1D3A4E', '#4A8A9E']} style={styles.container}>
         <Animated.View style={[styles.header, { opacity: headerOpacity, transform: [{ translateY: headerTranslateY }] }]}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <Icon name="chevron-left" size={30} color="#FFFFFF" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>AI Decision Assistant</Text>
