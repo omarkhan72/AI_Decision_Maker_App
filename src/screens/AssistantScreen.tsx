@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Animated, Easing, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -41,55 +41,105 @@ const MessageBubble = ({ message }: { message: Message }) => (
 );
 
 const AssistantScreen = () => {
+  // Animation values
+  const headerOpacity = useRef(new Animated.Value(0)).current;
+  const headerTranslateY = useRef(new Animated.Value(-30)).current;
+  const subHeaderOpacity = useRef(new Animated.Value(0)).current;
+  const subHeaderTranslateY = useRef(new Animated.Value(-15)).current;
+  const messagesOpacity = useRef(new Animated.Value(0)).current;
+  const messagesScale = useRef(new Animated.Value(0.95)).current;
+  const suggestionsOpacity = useRef(new Animated.Value(0)).current;
+  const suggestionsTranslateY = useRef(new Animated.Value(20)).current;
+  const inputOpacity = useRef(new Animated.Value(0)).current;
+  const inputTranslateY = useRef(new Animated.Value(30)).current;
+
+  useEffect(() => {
+    const ease = Easing.bezier(0.22, 0.61, 0.36, 1);
+    Animated.stagger(120, [
+      Animated.parallel([
+        Animated.timing(headerOpacity, { toValue: 1, duration: 500, easing: ease, useNativeDriver: true }),
+        Animated.timing(headerTranslateY, { toValue: 0, duration: 500, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(subHeaderOpacity, { toValue: 1, duration: 450, easing: ease, useNativeDriver: true }),
+        Animated.timing(subHeaderTranslateY, { toValue: 0, duration: 450, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(messagesOpacity, { toValue: 1, duration: 600, easing: ease, useNativeDriver: true }),
+        Animated.timing(messagesScale, { toValue: 1, duration: 600, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(suggestionsOpacity, { toValue: 1, duration: 450, easing: ease, useNativeDriver: true }),
+        Animated.timing(suggestionsTranslateY, { toValue: 0, duration: 450, easing: ease, useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(inputOpacity, { toValue: 1, duration: 500, easing: ease, useNativeDriver: true }),
+        Animated.timing(inputTranslateY, { toValue: 0, duration: 500, easing: ease, useNativeDriver: true }),
+      ]),
+    ]).start();
+  }, [
+    headerOpacity,
+    headerTranslateY,
+    subHeaderOpacity,
+    subHeaderTranslateY,
+    messagesOpacity,
+    messagesScale,
+    suggestionsOpacity,
+    suggestionsTranslateY,
+    inputOpacity,
+    inputTranslateY,
+  ]);
+
   return (
-    <LinearGradient colors={['#1D3A4E', '#4A8A9E']} style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity>
-          <Icon name="chevron-left" size={30} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>AI Decision Assistant</Text>
-        <TouchableOpacity>
-          <Icon name="file-document-outline" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <LinearGradient colors={['#1D3A4E', '#4A8A9E']} style={styles.container}>
+        <Animated.View style={[styles.header, { opacity: headerOpacity, transform: [{ translateY: headerTranslateY }] }]}>
+          <TouchableOpacity>
+            <Icon name="chevron-left" size={30} color="#FFFFFF" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>AI Decision Assistant</Text>
+          <TouchableOpacity>
+            <Icon name="file-document-outline" size={24} color="#FFFFFF" />
+          </TouchableOpacity>
+        </Animated.View>
 
-      <Text style={styles.subHeader}>Ask me anything about your decision...</Text>
+        <Animated.Text style={[styles.subHeader, { opacity: subHeaderOpacity, transform: [{ translateY: subHeaderTranslateY }] }]}>Ask me anything about your decision...</Animated.Text>
 
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
-        style={styles.flexGrow}
-        keyboardVerticalOffset={90}
-      >
-        <ScrollView style={styles.chatContainer}>
-          {messages.map(msg => <MessageBubble key={msg.id} message={msg} />)}
-        </ScrollView>
+        <KeyboardAvoidingView 
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+          style={styles.flexGrow}
+          keyboardVerticalOffset={0}
+        >
+          <Animated.ScrollView style={[styles.chatContainer, { opacity: messagesOpacity, transform: [{ scale: messagesScale }] }]}>
+            {messages.map(msg => <MessageBubble key={msg.id} message={msg} />)}
+          </Animated.ScrollView>
 
-        <View style={styles.footer}>
-          <View style={styles.suggestionButtons}>
-            <TouchableOpacity style={styles.suggestionChip}>
-              <Text style={styles.suggestionText}>List Pros & Cons</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.suggestionChip}>
-              <Text style={styles.suggestionText}>Suggest Alternatives</Text>
-            </TouchableOpacity>
+          <View style={styles.footer}>
+            <Animated.View style={[styles.suggestionButtons, { opacity: suggestionsOpacity, transform: [{ translateY: suggestionsTranslateY }] }]}>
+              <TouchableOpacity style={styles.suggestionChip}>
+                <Text style={styles.suggestionText}>List Pros & Cons</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.suggestionChip}>
+                <Text style={styles.suggestionText}>Suggest Alternatives</Text>
+              </TouchableOpacity>
+            </Animated.View>
+            <Animated.View style={[styles.inputContainer, { opacity: inputOpacity, transform: [{ translateY: inputTranslateY }] }]}>
+              <TextInput
+                style={styles.textInput}
+                placeholder="Type your question here..."
+                placeholderTextColor="#8A8A8E"
+              />
+              <TouchableOpacity>
+                <Icon name="microphone-outline" size={24} color="#8A8A8E" style={styles.micIcon} />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.sendButton}>
+                <Icon name="send" size={20} color="#FFFFFF" />
+              </TouchableOpacity>
+            </Animated.View>
           </View>
-          <View style={styles.dragIndicator} />
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.textInput}
-              placeholder="Type your question here..."
-              placeholderTextColor="#8A8A8E"
-            />
-            <TouchableOpacity>
-              <Icon name="microphone-outline" size={24} color="#8A8A8E" style={styles.micIcon} />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.sendButton}>
-              <Icon name="send" size={20} color="#FFFFFF" />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </KeyboardAvoidingView>
-    </LinearGradient>
+        </KeyboardAvoidingView>
+      </LinearGradient>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -156,12 +206,13 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   footer: {
-    padding: 15,
+    paddingHorizontal: 15,
+    paddingBottom: 15,
   },
   suggestionButtons: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: 15,
+    marginBottom: 10,
   },
   suggestionChip: {
     backgroundColor: '#FFB800',
