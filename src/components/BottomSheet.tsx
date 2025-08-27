@@ -1,4 +1,4 @@
-import React, { useImperativeHandle, forwardRef, useRef } from 'react';
+import React, { useImperativeHandle, forwardRef, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -29,6 +29,134 @@ const BottomSheet = forwardRef<BottomSheetRef, BottomSheetProps>(
   ({ onClose }, ref) => {
     const translateY = useRef(new Animated.Value(BOTTOM_SHEET_HEIGHT)).current;
     const backdropOpacity = useRef(new Animated.Value(0)).current;
+    
+    // Animation refs for entrance animations
+    const logoOpacity = useRef(new Animated.Value(0)).current;
+    const logoScale = useRef(new Animated.Value(0.95)).current;
+    const titleOpacity = useRef(new Animated.Value(0)).current;
+    const titleTranslateY = useRef(new Animated.Value(-20)).current;
+    const featuresOpacity = useRef(new Animated.Value(0)).current;
+    const featuresScale = useRef(new Animated.Value(0.95)).current;
+    const planOpacity = useRef(new Animated.Value(0)).current;
+    const planTranslateY = useRef(new Animated.Value(20)).current;
+    const priceOpacity = useRef(new Animated.Value(0)).current;
+    const priceScale = useRef(new Animated.Value(0.9)).current;
+    const buttonOpacity = useRef(new Animated.Value(0)).current;
+    const buttonScale = useRef(new Animated.Value(0.85)).current;
+
+    // Entrance animations function
+    const startEntranceAnimations = () => {
+      const bezierEasing = Easing.bezier(0.22, 0.61, 0.36, 1);
+      
+      // Staggered entrance animations
+      setTimeout(() => {
+        // Logo animation
+        Animated.parallel([
+          Animated.timing(logoOpacity, {
+            toValue: 1,
+            duration: 300,
+            easing: bezierEasing,
+            useNativeDriver: true,
+          }),
+          Animated.timing(logoScale, {
+            toValue: 1,
+            duration: 300,
+            easing: bezierEasing,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      }, 100);
+
+      setTimeout(() => {
+        // Title animation
+        Animated.parallel([
+          Animated.timing(titleOpacity, {
+            toValue: 1,
+            duration: 280,
+            easing: bezierEasing,
+            useNativeDriver: true,
+          }),
+          Animated.timing(titleTranslateY, {
+            toValue: 0,
+            duration: 280,
+            easing: bezierEasing,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      }, 180);
+
+      setTimeout(() => {
+        // Features animation
+        Animated.parallel([
+          Animated.timing(featuresOpacity, {
+            toValue: 1,
+            duration: 350,
+            easing: bezierEasing,
+            useNativeDriver: true,
+          }),
+          Animated.timing(featuresScale, {
+            toValue: 1,
+            duration: 350,
+            easing: bezierEasing,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      }, 260);
+
+      setTimeout(() => {
+        // Plan selection animation
+        Animated.parallel([
+          Animated.timing(planOpacity, {
+            toValue: 1,
+            duration: 280,
+            easing: bezierEasing,
+            useNativeDriver: true,
+          }),
+          Animated.timing(planTranslateY, {
+            toValue: 0,
+            duration: 280,
+            easing: bezierEasing,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      }, 340);
+
+      setTimeout(() => {
+        // Price animation
+        Animated.parallel([
+          Animated.timing(priceOpacity, {
+            toValue: 1,
+            duration: 300,
+            easing: bezierEasing,
+            useNativeDriver: true,
+          }),
+          Animated.timing(priceScale, {
+            toValue: 1,
+            duration: 300,
+            easing: bezierEasing,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      }, 420);
+
+      setTimeout(() => {
+        // Button animation
+        Animated.parallel([
+          Animated.timing(buttonOpacity, {
+            toValue: 1,
+            duration: 250,
+            easing: bezierEasing,
+            useNativeDriver: true,
+          }),
+          Animated.spring(buttonScale, {
+            toValue: 1,
+            damping: 15,
+            stiffness: 250,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      }, 500);
+    };
 
     useImperativeHandle(ref, () => ({
       open: () => {
@@ -45,7 +173,10 @@ const BottomSheet = forwardRef<BottomSheetRef, BottomSheetProps>(
             duration: 300,
             useNativeDriver: true,
           }),
-        ]).start();
+        ]).start(() => {
+          // Start entrance animations after sheet is open
+          startEntranceAnimations();
+        });
       },
       close: () => {
         Animated.parallel([
@@ -104,23 +235,41 @@ const BottomSheet = forwardRef<BottomSheetRef, BottomSheetProps>(
               <View style={styles.dragIndicator} />
 
               {/* Logo */}
-              <View style={styles.logoContainer}>
+              <Animated.View style={[
+                styles.logoContainer,
+                {
+                  opacity: logoOpacity,
+                  transform: [{ scale: logoScale }],
+                }
+              ]}>
                 <View style={styles.logoGrid}>
                   <View style={[styles.logoSquare, styles.logoSquareTopLeft]} />
                   <View style={[styles.logoSquare, styles.logoSquareTopRight]} />
                   <View style={[styles.logoSquare, styles.logoSquareBottomLeft]} />
                   <View style={[styles.logoSquare, styles.logoSquareBottomRight]} />
                 </View>
-              </View>
+              </Animated.View>
 
               {/* Title */}
-              <View style={styles.titleContainer}>
+              <Animated.View style={[
+                styles.titleContainer,
+                {
+                  opacity: titleOpacity,
+                  transform: [{ translateY: titleTranslateY }],
+                }
+              ]}>
                 <Text style={styles.mainTitle}>Go Pro — Smarter</Text>
                 <Text style={styles.subtitle}>Decisions, Unlimited</Text>
-              </View>
+              </Animated.View>
 
               {/* Feature Cards */}
-              <View style={styles.featuresContainer}>
+              <Animated.View style={[
+                styles.featuresContainer,
+                {
+                  opacity: featuresOpacity,
+                  transform: [{ scale: featuresScale }],
+                }
+              ]}>
                 <View style={styles.featuresRow}>
                   <View style={styles.featureCard}>
                     <View style={styles.featureIconContainer}>
@@ -153,10 +302,16 @@ const BottomSheet = forwardRef<BottomSheetRef, BottomSheetProps>(
                     <Text style={styles.featureDescription}>Get faster results first</Text>
                   </View>
                 </View>
-              </View>
+              </Animated.View>
 
               {/* Plan Selection */}
-              <View style={styles.planContainer}>
+              <Animated.View style={[
+                styles.planContainer,
+                {
+                  opacity: planOpacity,
+                  transform: [{ translateY: planTranslateY }],
+                }
+              ]}>
                 <View style={styles.planButtons}>
                   <TouchableOpacity style={[styles.planButton, styles.planButtonActive]}>
                     <Text style={[styles.planButtonText, styles.planButtonTextActive]}>
@@ -170,18 +325,31 @@ const BottomSheet = forwardRef<BottomSheetRef, BottomSheetProps>(
                     </View>
                   </TouchableOpacity>
                 </View>
-              </View>
+              </Animated.View>
 
               {/* Price */}
-              <View style={styles.priceContainer}>
+              <Animated.View style={[
+                styles.priceContainer,
+                {
+                  opacity: priceOpacity,
+                  transform: [{ scale: priceScale }],
+                }
+              ]}>
                 <Text style={styles.priceAmount}>$9.99</Text>
                 <Text style={styles.pricePeriod}>/month</Text>
-              </View>
+              </Animated.View>
 
               {/* Upgrade Button */}
-              <TouchableOpacity style={styles.upgradeButton}>
-                <Text style={styles.upgradeButtonText}>Upgrade Now</Text>
-              </TouchableOpacity>
+              <Animated.View style={[
+                {
+                  opacity: buttonOpacity,
+                  transform: [{ scale: buttonScale }],
+                }
+              ]}>
+                <TouchableOpacity style={styles.upgradeButton}>
+                  <Text style={styles.upgradeButtonText}>Upgrade Now</Text>
+                </TouchableOpacity>
+              </Animated.View>
 
               {/* Footer */}
               <View style={styles.footer}>
@@ -228,8 +396,8 @@ const styles = StyleSheet.create({
   gradientContainer: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 30,
+    paddingTop: 12,
+    paddingBottom: 20,
   },
   dragIndicator: {
     width: 40,
@@ -237,11 +405,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
     borderRadius: 2,
     alignSelf: 'center',
-    marginBottom: 20,
+    marginBottom: 16,
   },
   logoContainer: {
     alignItems: 'center',
-    marginBottom: 28,
+    marginBottom: 22,
   },
   logoGrid: {
     width: 60,
@@ -270,7 +438,7 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 20,
   },
   mainTitle: {
     fontSize: 24,
@@ -287,7 +455,7 @@ const styles = StyleSheet.create({
     lineHeight: 28,
   },
   featuresContainer: {
-    marginBottom: 36,
+    marginBottom: 28,
   },
   featuresRow: {
     flexDirection: 'row',
@@ -317,7 +485,7 @@ const styles = StyleSheet.create({
     lineHeight: 13,
   },
   planContainer: {
-    marginBottom: 36,
+    marginBottom: 28,
   },
   planButtons: {
     flexDirection: 'row',
@@ -366,7 +534,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'baseline',
     justifyContent: 'center',
-    marginBottom: 24,
+    marginBottom: 20,
   },
   priceAmount: {
     fontSize: 36,
